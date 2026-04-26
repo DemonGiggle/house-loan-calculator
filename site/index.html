@@ -33,32 +33,32 @@
 
           <div class="field-grid">
             <label class="field">
-              <span>房屋總價（萬元）</span>
+              <span class="field-label">房屋總價（萬元）<button type="button" class="help-trigger" data-help-key="price" aria-label="說明：房屋總價">?</button></span>
               <input id="price" name="price" type="number" min="0" step="1" value="1500">
             </label>
 
             <label class="field">
-              <span>貸款成數（%）</span>
+              <span class="field-label">貸款成數（%）<button type="button" class="help-trigger" data-help-key="loanRatio" aria-label="說明：貸款成數">?</button></span>
               <input id="loanRatio" name="loanRatio" type="number" min="0" max="100" step="1" value="80">
             </label>
 
             <label class="field">
-              <span>室內 / 權狀坪數（坪）</span>
+              <span class="field-label">室內 / 權狀坪數（坪）<button type="button" class="help-trigger" data-help-key="areaPing" aria-label="說明：室內或權狀坪數">?</button></span>
               <input id="areaPing" name="areaPing" type="number" min="0" step="0.1" value="25">
             </label>
 
             <label class="field">
-              <span>房仲費（買方，%）</span>
+              <span class="field-label">房仲費（買方，%）<button type="button" class="help-trigger" data-help-key="brokerFeeRate" aria-label="說明：房仲費">?</button></span>
               <input id="brokerFeeRate" name="brokerFeeRate" type="number" min="0" step="0.1" value="1">
             </label>
 
             <label class="field">
-              <span>契稅估值比例（相對總價 %）</span>
+              <span class="field-label">契稅估值比例（相對總價 %）<button type="button" class="help-trigger" data-help-key="assessedValueRatio" aria-label="說明：契稅估值比例">?</button></span>
               <input id="assessedValueRatio" name="assessedValueRatio" type="number" min="0" max="100" step="0.1" value="55">
             </label>
 
             <label class="field">
-              <span>裝潢單坪估價（萬元）</span>
+              <span class="field-label">裝潢單坪估價（萬元）<button type="button" class="help-trigger" data-help-key="renovationPerPing" aria-label="說明：裝潢單坪估價">?</button></span>
               <div class="range-inputs">
                 <input id="renovationLowPerPing" name="renovationLowPerPing" type="number" min="0" step="0.5" value="3">
                 <span>~</span>
@@ -69,32 +69,32 @@
 
           <div class="field-grid">
             <label class="field">
-              <span>代書 / 設定相關固定費（元）</span>
+              <span class="field-label">代書 / 設定相關固定費（元）<button type="button" class="help-trigger" data-help-key="scrivenerFee" aria-label="說明：代書與設定固定費">?</button></span>
               <input id="scrivenerFee" name="scrivenerFee" type="number" min="0" step="1000" value="30000">
             </label>
 
             <label class="field">
-              <span>貸款設定規費（貸款額 %）</span>
+              <span class="field-label">貸款設定規費（貸款額 %）<button type="button" class="help-trigger" data-help-key="mortgageRegistrationRate" aria-label="說明：貸款設定規費">?</button></span>
               <input id="mortgageRegistrationRate" name="mortgageRegistrationRate" type="number" min="0" step="0.01" value="0.12">
             </label>
 
             <label class="field">
-              <span>契稅稅率（估值 %）</span>
+              <span class="field-label">契稅稅率（估值 %）<button type="button" class="help-trigger" data-help-key="deedTaxRate" aria-label="說明：契稅稅率">?</button></span>
               <input id="deedTaxRate" name="deedTaxRate" type="number" min="0" step="0.1" value="6">
             </label>
 
             <label class="field">
-              <span>印花稅（總價 %）</span>
+              <span class="field-label">印花稅（總價 %）<button type="button" class="help-trigger" data-help-key="stampTaxRate" aria-label="說明：印花稅">?</button></span>
               <input id="stampTaxRate" name="stampTaxRate" type="number" min="0" step="0.01" value="0.1">
             </label>
 
             <label class="field">
-              <span>銀行開辦 / 鑑價等（元）</span>
+              <span class="field-label">銀行開辦 / 鑑價等（元）<button type="button" class="help-trigger" data-help-key="bankFees" aria-label="說明：銀行開辦與鑑價費">?</button></span>
               <input id="bankFees" name="bankFees" type="number" min="0" step="1000" value="12000">
             </label>
 
             <label class="field">
-              <span>預留緩衝（總價 %）</span>
+              <span class="field-label">預留緩衝（總價 %）<button type="button" class="help-trigger" data-help-key="bufferRate" aria-label="說明：預留緩衝">?</button></span>
               <input id="bufferRate" name="bufferRate" type="number" min="0" step="0.1" value="2">
             </label>
           </div>
@@ -102,14 +102,14 @@
           <fieldset class="card inset">
             <legend>納入預算項目</legend>
             <div class="checkbox-grid">
-              <label><input type="checkbox" name="includeBrokerFee" checked> 房仲費</label>
-              <label><input type="checkbox" name="includeDeedTax" checked> 契稅</label>
-              <label><input type="checkbox" name="includeStampTax" checked> 印花稅</label>
-              <label><input type="checkbox" name="includeScrivenerFee" checked> 代書 / 設定固定費</label>
-              <label><input type="checkbox" name="includeMortgageRegistration" checked> 貸款設定規費</label>
-              <label><input type="checkbox" name="includeBankFees" checked> 銀行開辦 / 鑑價費</label>
-              <label><input type="checkbox" name="includeRenovation" checked> 裝潢費</label>
-              <label><input type="checkbox" name="includeBuffer" checked> 緩衝預備金</label>
+              <label><input type="checkbox" name="includeBrokerFee" checked> 房仲費<button type="button" class="help-trigger inline-help" data-help-key="includeBrokerFee" aria-label="說明：是否納入房仲費">?</button></label>
+              <label><input type="checkbox" name="includeDeedTax" checked> 契稅<button type="button" class="help-trigger inline-help" data-help-key="includeDeedTax" aria-label="說明：是否納入契稅">?</button></label>
+              <label><input type="checkbox" name="includeStampTax" checked> 印花稅<button type="button" class="help-trigger inline-help" data-help-key="includeStampTax" aria-label="說明：是否納入印花稅">?</button></label>
+              <label><input type="checkbox" name="includeScrivenerFee" checked> 代書 / 設定固定費<button type="button" class="help-trigger inline-help" data-help-key="includeScrivenerFee" aria-label="說明：是否納入代書與設定固定費">?</button></label>
+              <label><input type="checkbox" name="includeMortgageRegistration" checked> 貸款設定規費<button type="button" class="help-trigger inline-help" data-help-key="includeMortgageRegistration" aria-label="說明：是否納入貸款設定規費">?</button></label>
+              <label><input type="checkbox" name="includeBankFees" checked> 銀行開辦 / 鑑價費<button type="button" class="help-trigger inline-help" data-help-key="includeBankFees" aria-label="說明：是否納入銀行開辦與鑑價費">?</button></label>
+              <label><input type="checkbox" name="includeRenovation" checked> 裝潢費<button type="button" class="help-trigger inline-help" data-help-key="includeRenovation" aria-label="說明：是否納入裝潢費">?</button></label>
+              <label><input type="checkbox" name="includeBuffer" checked> 緩衝預備金<button type="button" class="help-trigger inline-help" data-help-key="includeBuffer" aria-label="說明：是否納入緩衝預備金">?</button></label>
             </div>
           </fieldset>
 
@@ -147,6 +147,15 @@
         </section>
       </section>
     </main>
+
+    <div id="help-modal" class="help-modal hidden" aria-hidden="true">
+      <div class="help-backdrop" data-close-help="true"></div>
+      <div class="help-dialog card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+        <button type="button" class="help-close" id="help-close" aria-label="關閉說明">×</button>
+        <h3 id="help-title">項目說明</h3>
+        <p id="help-body"></p>
+      </div>
+    </div>
 
     <script type="module" src="./app.js"></script>
   </body>

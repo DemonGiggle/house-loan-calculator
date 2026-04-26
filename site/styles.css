@@ -23,6 +23,10 @@ body {
   color: var(--text);
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 .page {
   width: min(1200px, calc(100% - 32px));
   margin: 32px auto 48px;
@@ -98,6 +102,45 @@ legend {
   font-size: 0.95rem;
 }
 
+.field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.help-trigger {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.help-trigger:hover {
+  filter: brightness(0.98);
+}
+
+.help-trigger:focus-visible,
+.help-close:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.inline-help {
+  margin-left: 2px;
+  flex: 0 0 auto;
+}
+
 input[type="number"] {
   width: 100%;
   border: 1px solid var(--border);
@@ -146,6 +189,7 @@ legend {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .results {
@@ -212,6 +256,54 @@ dd {
   line-height: 1.7;
 }
 
+.help-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+.help-modal.hidden {
+  display: none;
+}
+
+.help-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.help-dialog {
+  position: relative;
+  width: min(560px, calc(100% - 32px));
+  margin: min(15vh, 120px) auto 0;
+  padding: 24px;
+  z-index: 1;
+}
+
+.help-dialog h3 {
+  margin: 0 32px 12px 0;
+}
+
+.help-dialog p {
+  margin: 0;
+  color: var(--subtle);
+  line-height: 1.8;
+}
+
+.help-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--text);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
 @media (max-width: 960px) {
   .grid,
   .hero {
@@ -227,7 +319,8 @@ dd {
 
   .form-card,
   .result-card,
-  .hero {
+  .hero,
+  .help-dialog {
     padding: 18px;
     border-radius: 20px;
   }
