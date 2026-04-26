@@ -63,7 +63,8 @@ body.modal-open {
 }
 
 h1,
-h2 {
+h2,
+h3 {
   margin: 0 0 12px;
 }
 
@@ -73,7 +74,8 @@ h2 {
 .notes,
 .hero-note,
 .field span,
-legend {
+legend,
+.mode-option small {
   color: var(--subtle);
 }
 
@@ -107,6 +109,49 @@ legend {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.loan-mode-panel {
+  margin-bottom: 16px;
+}
+
+.loan-mode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.loan-mode-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mode-option {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.mode-option input {
+  margin-top: 4px;
+}
+
+.mode-option span {
+  display: grid;
+  gap: 4px;
+}
+
+.hidden-by-mode {
+  display: none;
 }
 
 .help-trigger {
@@ -306,7 +351,8 @@ dd {
 
 @media (max-width: 960px) {
   .grid,
-  .hero {
+  .hero,
+  .loan-mode-options {
     grid-template-columns: 1fr;
   }
 }

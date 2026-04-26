@@ -12,10 +12,13 @@ const notes = document.querySelector("#notes");
 const helpModal = document.querySelector("#help-modal");
 const helpBody = document.querySelector("#help-body");
 const helpClose = document.querySelector("#help-close");
+const loanModeFields = document.querySelectorAll("[data-mode-field]");
 
 const helpContent = {
   price: "房屋成交總價。這是整個試算的基礎，頭期款、多數比例型費用都會跟著它一起變動。",
+  loanInputMode: "你可以二選一：若還在抓銀行大概能貸幾成，就用『貸款成數』；若已經知道大概會核多少金額，就直接切到『貸款金額』。",
   loanRatio: "銀行願意貸給你的比例。像 80% 代表總價 1500 萬時，預估可貸 1200 萬，剩下 300 萬就是基本頭期款。",
+  loanAmountWan: "直接輸入你預計要貸的總金額。系統會自動換算成對應貸款成數，並據此估算頭期款與相關費用。",
   areaPing: "用來估算裝潢費的坪數。你可以填室內坪數，若你習慣抓權狀坪數也可以，但結果通常會偏高一些。",
   brokerFeeRate: "買方向房仲支付的服務費比例。常見上限約為成交總價 2%，這裡可依實際談到的條件自行調整。",
   assessedValueRatio: "契稅通常不是直接用成交價課，而是用房屋評定現值或移轉現值估算。這裡先用總價的一個比例近似。",
@@ -36,13 +39,19 @@ const helpContent = {
   includeBuffer: "勾選後，會保留一筆彈性預備金，讓預算不會剛好卡死。"
 };
 
+function currentLoanInputMode() {
+  return form.querySelector('input[name="loanInputMode"]:checked')?.value || "ratio";
+}
+
 function readForm() {
   const formData = new FormData(form);
   const checkbox = (name) => formData.get(name) === "on";
 
   return {
     priceWan: formData.get("price"),
+    loanInputMode: currentLoanInputMode(),
     loanRatio: formData.get("loanRatio"),
+    loanAmountWan: formData.get("loanAmountWan"),
     areaPing: formData.get("areaPing"),
     brokerFeeRate: formData.get("brokerFeeRate"),
     assessedValueRatio: formData.get("assessedValueRatio"),
@@ -65,11 +74,27 @@ function readForm() {
   };
 }
 
+function syncLoanModeUI() {
+  const mode = currentLoanInputMode();
+
+  loanModeFields.forEach((field) => {
+    const active = field.dataset.modeField === mode;
+    field.classList.toggle("hidden-by-mode", !active);
+    const input = field.querySelector("input");
+    if (input) {
+      input.disabled = !active;
+    }
+  });
+}
+
 function render() {
+  syncLoanModeUI();
   const result = calculateBudget(readForm());
 
   recommendedRange.textContent = `${formatWan(result.totalLow)} ~ ${formatWan(result.totalHigh)}`;
-  rangeSubtitle.textContent = `包含頭期款與目前勾選的稅費、房仲、裝潢與緩衝。`;
+  rangeSubtitle.textContent = result.input.loanInputMode === "amount"
+    ? `已用貸款金額 ${formatWan(result.loanAmount)} 反推頭期款，並包含目前勾選的費用。`
+    : `包含頭期款與目前勾選的稅費、房仲、裝潢與緩衝。`;
   loanAmount.textContent = formatCurrency(result.loanAmount);
   downPayment.textContent = formatCurrency(result.downPayment);
   cashNeedLow.textContent = formatCurrency(result.totalLow);
@@ -116,6 +141,7 @@ function closeHelp() {
 }
 
 form.addEventListener("input", render);
+form.addEventListener("change", render);
 form.addEventListener("click", (event) => {
   const trigger = event.target.closest(".help-trigger");
   if (!trigger) {

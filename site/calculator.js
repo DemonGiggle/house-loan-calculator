@@ -19,7 +19,7 @@ export function formatWan(value) {
 export function calculateBudget(rawInput) {
   const input = normalizeInput(rawInput);
   const price = input.priceWan * 10000;
-  const loanAmount = price * percent(input.loanRatio);
+  const loanAmount = resolveLoanAmount(input, price);
   const downPayment = Math.max(price - loanAmount, 0);
   const assessedValue = price * percent(input.assessedValueRatio);
 
@@ -108,7 +108,9 @@ export function calculateBudget(rawInput) {
     renovationLow: roundCurrency(renovationLow),
     renovationHigh: roundCurrency(renovationHigh),
     notes: [
-      `本試算用房屋總價 ${formatWan(price)} 與貸款成數 ${input.loanRatio}% 估算，基本頭期款為 ${formatWan(downPayment)}。`,
+      input.loanInputMode === "amount"
+        ? `本試算用房屋總價 ${formatWan(price)} 與貸款金額 ${formatWan(loanAmount)} 估算，對應貸款成數約 ${input.loanRatio.toFixed(1)}%，基本頭期款為 ${formatWan(downPayment)}。`
+        : `本試算用房屋總價 ${formatWan(price)} 與貸款成數 ${input.loanRatio}% 估算，基本頭期款為 ${formatWan(downPayment)}。`,
       `契稅以總價的 ${input.assessedValueRatio}% 作為估值基礎，再套用 ${input.deedTaxRate}% 稅率估算。`,
       `裝潢費以 ${input.areaPing} 坪、每坪 ${input.renovationLowPerPingWan}~${input.renovationHighPerPingWan} 萬估算。`,
       "若你想專注看簽約前現金準備，可取消裝潢或緩衝項目。"
@@ -117,9 +119,19 @@ export function calculateBudget(rawInput) {
 }
 
 export function normalizeInput(rawInput) {
+  const priceWan = numberOrZero(rawInput.priceWan);
+  const loanInputMode = rawInput.loanInputMode === "amount" ? "amount" : "ratio";
+  const rawLoanAmountWan = numberOrZero(rawInput.loanAmountWan);
+  const cappedLoanAmountWan = priceWan > 0 ? Math.min(rawLoanAmountWan, priceWan) : rawLoanAmountWan;
+  const derivedLoanRatio = priceWan > 0 ? (cappedLoanAmountWan / priceWan) * 100 : 0;
+
   const normalized = {
-    priceWan: numberOrZero(rawInput.priceWan),
-    loanRatio: clamp(numberOrZero(rawInput.loanRatio), 0, 100),
+    priceWan,
+    loanInputMode,
+    loanAmountWan: cappedLoanAmountWan,
+    loanRatio: loanInputMode === "amount"
+      ? clamp(derivedLoanRatio, 0, 100)
+      : clamp(numberOrZero(rawInput.loanRatio), 0, 100),
     areaPing: numberOrZero(rawInput.areaPing),
     brokerFeeRate: numberOrZero(rawInput.brokerFeeRate),
     assessedValueRatio: clamp(numberOrZero(rawInput.assessedValueRatio), 0, 100),
@@ -146,6 +158,14 @@ export function normalizeInput(rawInput) {
   }
 
   return normalized;
+}
+
+function resolveLoanAmount(input, price) {
+  if (input.loanInputMode === "amount") {
+    return input.loanAmountWan * 10000;
+  }
+
+  return price * percent(input.loanRatio);
 }
 
 function numberOrZero(value) {

@@ -36,12 +36,48 @@
               <span class="field-label">房屋總價（萬元）<button type="button" class="help-trigger" data-help-key="price" aria-label="說明：房屋總價">?</button></span>
               <input id="price" name="price" type="number" min="0" step="1" value="1500">
             </label>
+          </div>
 
-            <label class="field">
-              <span class="field-label">貸款成數（%）<button type="button" class="help-trigger" data-help-key="loanRatio" aria-label="說明：貸款成數">?</button></span>
-              <input id="loanRatio" name="loanRatio" type="number" min="0" max="100" step="1" value="80">
-            </label>
+          <section class="loan-mode card inset loan-mode-panel">
+            <div class="loan-mode-header">
+              <div>
+                <h3>貸款輸入方式</h3>
+                <p class="sub">兩種方式擇一即可：用貸款成數推估，或直接輸入你預計貸的金額。</p>
+              </div>
+              <button type="button" class="help-trigger" data-help-key="loanInputMode" aria-label="說明：貸款輸入方式">?</button>
+            </div>
 
+            <div class="loan-mode-options" role="radiogroup" aria-label="貸款輸入方式">
+              <label class="mode-option">
+                <input type="radio" name="loanInputMode" value="ratio" checked>
+                <span>
+                  <strong>用貸款成數輸入</strong>
+                  <small>適合還在抓 7 成、8 成這類情境時</small>
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="loanInputMode" value="amount">
+                <span>
+                  <strong>用貸款金額輸入</strong>
+                  <small>適合你已經知道銀行大約會貸多少時</small>
+                </span>
+              </label>
+            </div>
+
+            <div class="field-grid loan-mode-fields">
+              <label class="field" data-mode-field="ratio">
+                <span class="field-label">貸款成數（%）<button type="button" class="help-trigger" data-help-key="loanRatio" aria-label="說明：貸款成數">?</button></span>
+                <input id="loanRatio" name="loanRatio" type="number" min="0" max="100" step="1" value="80">
+              </label>
+
+              <label class="field hidden-by-mode" data-mode-field="amount">
+                <span class="field-label">貸款金額（萬元）<button type="button" class="help-trigger" data-help-key="loanAmountWan" aria-label="說明：貸款金額">?</button></span>
+                <input id="loanAmountWan" name="loanAmountWan" type="number" min="0" step="1" value="1200">
+              </label>
+            </div>
+          </section>
+
+          <div class="field-grid">
             <label class="field">
               <span class="field-label">室內 / 權狀坪數（坪）<button type="button" class="help-trigger" data-help-key="areaPing" aria-label="說明：室內或權狀坪數">?</button></span>
               <input id="areaPing" name="areaPing" type="number" min="0" step="0.1" value="25">
