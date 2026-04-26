@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>房貸預算試算器</title>
+    <meta
+      name="description"
+      content="輸入總價、貸款成數與坪數，快速估算買房自備款、稅費、房仲與裝潢預算。"
+    >
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero card">
+        <div>
+          <p class="eyebrow">house-loan-calculator</p>
+          <h1>房貸預算試算器</h1>
+          <p class="hero-copy">
+            以台灣常見購屋情境估算「買房當下需要準備多少現金」。
+            你可以決定哪些費用要納入預算，也能把裝潢一起估進去。
+          </p>
+        </div>
+        <div class="hero-note">
+          <strong>提醒：</strong>
+          本頁以常見比例快速估算，實際契稅、規費、貸款相關費用仍以銀行、代書與主管機關資料為準。
+        </div>
+      </section>
+
+      <section class="grid">
+        <form id="calculator-form" class="card form-card">
+          <h2>輸入條件</h2>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>房屋總價（萬元）</span>
+              <input id="price" name="price" type="number" min="0" step="1" value="1500">
+            </label>
+
+            <label class="field">
+              <span>貸款成數（%）</span>
+              <input id="loanRatio" name="loanRatio" type="number" min="0" max="100" step="1" value="80">
+            </label>
+
+            <label class="field">
+              <span>室內 / 權狀坪數（坪）</span>
+              <input id="areaPing" name="areaPing" type="number" min="0" step="0.1" value="25">
+            </label>
+
+            <label class="field">
+              <span>房仲費（買方，%）</span>
+              <input id="brokerFeeRate" name="brokerFeeRate" type="number" min="0" step="0.1" value="1">
+            </label>
+
+            <label class="field">
+              <span>契稅估值比例（相對總價 %）</span>
+              <input id="assessedValueRatio" name="assessedValueRatio" type="number" min="0" max="100" step="0.1" value="55">
+            </label>
+
+            <label class="field">
+              <span>裝潢單坪估價（萬元）</span>
+              <div class="range-inputs">
+                <input id="renovationLowPerPing" name="renovationLowPerPing" type="number" min="0" step="0.5" value="3">
+                <span>~</span>
+                <input id="renovationHighPerPing" name="renovationHighPerPing" type="number" min="0" step="0.5" value="8">
+              </div>
+            </label>
+          </div>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>代書 / 設定相關固定費（元）</span>
+              <input id="scrivenerFee" name="scrivenerFee" type="number" min="0" step="1000" value="30000">
+            </label>
+
+            <label class="field">
+              <span>貸款設定規費（貸款額 %）</span>
+              <input id="mortgageRegistrationRate" name="mortgageRegistrationRate" type="number" min="0" step="0.01" value="0.12">
+            </label>
+
+            <label class="field">
+              <span>契稅稅率（估值 %）</span>
+              <input id="deedTaxRate" name="deedTaxRate" type="number" min="0" step="0.1" value="6">
+            </label>
+
+            <label class="field">
+              <span>印花稅（總價 %）</span>
+              <input id="stampTaxRate" name="stampTaxRate" type="number" min="0" step="0.01" value="0.1">
+            </label>
+
+            <label class="field">
+              <span>銀行開辦 / 鑑價等（元）</span>
+              <input id="bankFees" name="bankFees" type="number" min="0" step="1000" value="12000">
+            </label>
+
+            <label class="field">
+              <span>預留緩衝（總價 %）</span>
+              <input id="bufferRate" name="bufferRate" type="number" min="0" step="0.1" value="2">
+            </label>
+          </div>
+
+          <fieldset class="card inset">
+            <legend>納入預算項目</legend>
+            <div class="checkbox-grid">
+              <label><input type="checkbox" name="includeBrokerFee" checked> 房仲費</label>
+              <label><input type="checkbox" name="includeDeedTax" checked> 契稅</label>
+              <label><input type="checkbox" name="includeStampTax" checked> 印花稅</label>
+              <label><input type="checkbox" name="includeScrivenerFee" checked> 代書 / 設定固定費</label>
+              <label><input type="checkbox" name="includeMortgageRegistration" checked> 貸款設定規費</label>
+              <label><input type="checkbox" name="includeBankFees" checked> 銀行開辦 / 鑑價費</label>
+              <label><input type="checkbox" name="includeRenovation" checked> 裝潢費</label>
+              <label><input type="checkbox" name="includeBuffer" checked> 緩衝預備金</label>
+            </div>
+          </fieldset>
+
+          <p class="caption">
+            所有百分比皆可調整。若你想先看「不含裝潢」或「不把房仲費算進自備款」的情境，直接取消勾選即可。
+          </p>
+        </form>
+
+        <section class="results">
+          <article class="card result-card accent">
+            <h2>建議自備款區間</h2>
+            <p class="mega" id="recommendedRange">--</p>
+            <p class="sub" id="rangeSubtitle">--</p>
+          </article>
+
+          <article class="card result-card">
+            <h2>貸款與頭期</h2>
+            <dl class="stats">
+              <div><dt>預估貸款金額</dt><dd id="loanAmount">--</dd></div>
+              <div><dt>基本頭期款</dt><dd id="downPayment">--</dd></div>
+              <div><dt>總現金需求（低）</dt><dd id="cashNeedLow">--</dd></div>
+              <div><dt>總現金需求（高）</dt><dd id="cashNeedHigh">--</dd></div>
+            </dl>
+          </article>
+
+          <article class="card result-card">
+            <h2>費用拆解</h2>
+            <div id="breakdown" class="breakdown"></div>
+          </article>
+
+          <article class="card result-card">
+            <h2>估算說明</h2>
+            <ul class="notes" id="notes"></ul>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
