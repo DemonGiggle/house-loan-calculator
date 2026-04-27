@@ -14,10 +14,12 @@ const helpBody = document.querySelector("#help-body");
 const helpClose = document.querySelector("#help-close");
 const loanModeFields = document.querySelectorAll("[data-mode-field]");
 
-const checklistStages = document.querySelectorAll(".checklist-stage");
+function getChecklistBoxes(stage) {
+  return [...stage.querySelectorAll('input[type="checkbox"]')];
+}
 
 function updateChecklistStageStatus(stage) {
-  const boxes = [...stage.querySelectorAll('.stage-body input[type="checkbox"]')];
+  const boxes = getChecklistBoxes(stage);
   const checked = boxes.filter((box) => box.checked).length;
   const total = boxes.length;
   const status = stage.querySelector(".stage-status");
@@ -30,12 +32,15 @@ function updateChecklistStageStatus(stage) {
   if (status) {
     if (total > 0 && checked === total) {
       status.textContent = "✓";
+      status.title = "已完成";
       status.setAttribute("aria-label", "已完成");
     } else if (checked > 0) {
       status.textContent = "◐";
+      status.title = "進行中";
       status.setAttribute("aria-label", "進行中");
     } else {
       status.textContent = "○";
+      status.title = "未開始";
       status.setAttribute("aria-label", "未開始");
     }
   }
@@ -46,13 +51,9 @@ function updateChecklistStageStatus(stage) {
 }
 
 function initChecklistStages() {
-  checklistStages.forEach((stage) => {
+  document.querySelectorAll(".checklist-stage").forEach((stage) => {
     updateChecklistStageStatus(stage);
-    stage.addEventListener("change", (event) => {
-      if (event.target.matches('.stage-body input[type="checkbox"]')) {
-        updateChecklistStageStatus(stage);
-      }
-    });
+    stage.addEventListener("change", () => updateChecklistStageStatus(stage));
   });
 }
 
