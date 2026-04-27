@@ -14,6 +14,49 @@ const helpBody = document.querySelector("#help-body");
 const helpClose = document.querySelector("#help-close");
 const loanModeFields = document.querySelectorAll("[data-mode-field]");
 
+const checklistStages = document.querySelectorAll(".checklist-stage");
+
+function updateChecklistStageStatus(stage) {
+  const boxes = [...stage.querySelectorAll('.stage-body input[type="checkbox"]')];
+  const checked = boxes.filter((box) => box.checked).length;
+  const total = boxes.length;
+  const status = stage.querySelector(".stage-status");
+  const progress = stage.querySelector(".stage-progress");
+
+  stage.classList.toggle("status-empty", checked === 0);
+  stage.classList.toggle("status-partial", checked > 0 && checked < total);
+  stage.classList.toggle("status-complete", total > 0 && checked === total);
+
+  if (status) {
+    if (total > 0 && checked === total) {
+      status.textContent = "✓";
+      status.setAttribute("aria-label", "已完成");
+    } else if (checked > 0) {
+      status.textContent = "◐";
+      status.setAttribute("aria-label", "進行中");
+    } else {
+      status.textContent = "○";
+      status.setAttribute("aria-label", "未開始");
+    }
+  }
+
+  if (progress) {
+    progress.textContent = `${checked}/${total}`;
+  }
+}
+
+function initChecklistStages() {
+  checklistStages.forEach((stage) => {
+    updateChecklistStageStatus(stage);
+    stage.addEventListener("change", (event) => {
+      if (event.target.matches('.stage-body input[type="checkbox"]')) {
+        updateChecklistStageStatus(stage);
+      }
+    });
+  });
+}
+
+
 const tabButtons = document.querySelectorAll("[data-tab-target]");
 const tabPanels = document.querySelectorAll(".tab-panel");
 
@@ -186,4 +229,5 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+initChecklistStages();
 render();

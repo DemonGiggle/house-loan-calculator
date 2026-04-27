@@ -195,41 +195,62 @@
           <div>
             <p class="eyebrow">Taiwan home buying checklist</p>
             <h2>台灣買房流程檢核表</h2>
-            <p class="sub">依流程分成 13 個階段。先看大輪廓，再展開每階段細節逐項勾選；內容已補上貸款保護、履約保證、實價登錄、驗屋、產權與交屋容易漏掉的項目。</p>
+            <p class="sub">改成可收疊流程卡。預設看的是大流程；展開後可以勾選子項目，外層會自動顯示未開始、進行中或完成。</p>
           </div>
           <ol class="process-map">
-            <li>能力確認</li><li>銀行估貸</li><li>看屋查證</li><li>出價斡旋</li><li>簽約</li><li>正式房貸</li><li>用印</li><li>報稅完稅</li><li>對保</li><li>抵押設定</li><li>過戶</li><li>撥款</li><li>交屋</li>
+            <li>買前準備</li><li>出價斡旋</li><li>簽約</li><li>正式房貸</li><li>用印</li><li>報稅完稅</li><li>對保</li><li>抵押設定</li><li>過戶</li><li>撥款</li><li>交屋</li>
           </ol>
         </section>
 
         <div class="checklist-layout">
           <aside class="card checklist-toc" aria-label="流程目錄">
             <h3>流程總覽</h3>
-            <a href="#stage-1">1. 確認買房能力</a>
-            <a href="#stage-2">2. 先問銀行初步估貸</a>
-            <a href="#stage-3">3. 看屋、查屋況與產權</a>
-            <a href="#stage-4">4. 出價、斡旋、要約</a>
-            <a href="#stage-5">5. 簽買賣契約</a>
-            <a href="#stage-6">6. 正式申請房貸</a>
-            <a href="#stage-7">7. 用印</a>
-            <a href="#stage-8">8. 報稅、完稅</a>
-            <a href="#stage-9">9. 銀行對保</a>
-            <a href="#stage-10">10. 抵押權設定</a>
-            <a href="#stage-11">11. 所有權過戶</a>
-            <a href="#stage-12">12. 銀行撥款</a>
-            <a href="#stage-13">13. 交屋、點交、付尾款</a>
+            <a href="#stage-1">1. 買前準備</a>
+            <a href="#stage-2">2. 出價、斡旋、要約</a>
+            <a href="#stage-3">3. 簽買賣契約</a>
+            <a href="#stage-4">4. 正式申請房貸</a>
+            <a href="#stage-5">5. 用印</a>
+            <a href="#stage-6">6. 報稅、完稅</a>
+            <a href="#stage-7">7. 銀行對保</a>
+            <a href="#stage-8">8. 抵押權設定</a>
+            <a href="#stage-9">9. 所有權過戶</a>
+            <a href="#stage-10">10. 銀行撥款</a>
+            <a href="#stage-11">11. 交屋、點交、付尾款</a>
           </aside>
 
           <div class="checklist-stages">
-            <article id="stage-1" class="card checklist-stage">
-  <div class="stage-heading"><span>1</span><div><h3>確認買房能力</h3><p>確認買得起的總價、自備款與每月房貸是否能長期負擔。</p></div></div>
-  <div class="check-group"><h4>要確認</h4><div class="check-items"><label><input type="checkbox"> 可接受的房屋總價上限</label>
+            <details id="stage-1" class="card checklist-stage" open>
+  <summary class="stage-summary">
+    <span class="stage-number">1</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>買前準備：預算、估貸、看屋查證</strong><small>先確認買得起、貸得到，再檢查房屋本身與產權；這是出價前最重要的一包功課。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>財務能力</h4><div class="check-items"><label><input type="checkbox"> 可接受的房屋總價上限</label>
 <label><input type="checkbox"> 可準備的自備款金額</label>
 <label><input type="checkbox"> 每月可負擔房貸金額</label>
 <label><input type="checkbox"> 是否還有其他貸款或信用卡循環</label>
 <label><input type="checkbox"> 是否會影響銀行核貸成數</label>
 <label><input type="checkbox"> 是否預留稅費、仲介費、代書費、裝潢費、搬家費</label>
 <label><input type="checkbox"> 是否保留 6～12 個月緊急預備金</label></div></div>
+<div class="check-group"><h4>初步估貸</h4><div class="check-items"><label><input type="checkbox"> 已詢問 2～3 家銀行</label>
+<label><input type="checkbox"> 可貸成數</label>
+<label><input type="checkbox"> 可貸金額</label>
+<label><input type="checkbox"> 房貸利率</label>
+<label><input type="checkbox"> 貸款年限</label>
+<label><input type="checkbox"> 是否有寬限期</label>
+<label><input type="checkbox"> 是否有綁約</label>
+<label><input type="checkbox"> 提前清償是否有違約金</label>
+<label><input type="checkbox"> 是否受第二戶、信用、收入負債比限制</label>
+<label><input type="checkbox"> 銀行是否接受該物件條件</label></div></div>
+<div class="check-group"><h4>估貸資料</h4><div class="check-items"><label><input type="checkbox"> 身分證</label>
+<label><input type="checkbox"> 收入證明</label>
+<label><input type="checkbox"> 扣繳憑單</label>
+<label><input type="checkbox"> 薪轉紀錄</label>
+<label><input type="checkbox"> 勞保明細或在職證明</label>
+<label><input type="checkbox"> 其他貸款資料</label>
+<label><input type="checkbox"> 物件地址或謄本資料</label></div></div>
 <div class="check-group"><h4>常見費用</h4><div class="check-items"><label><input type="checkbox"> 自備款</label>
 <label><input type="checkbox"> 契稅</label>
 <label><input type="checkbox"> 印花稅</label>
@@ -242,31 +263,7 @@
 <label><input type="checkbox"> 裝潢或修繕費</label>
 <label><input type="checkbox"> 家具家電費</label>
 <label><input type="checkbox"> 管理費預繳或社區移交費用</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>不要只看「房價 × 自備款比例」。</li><li>銀行實際核貸成數可能低於預期。</li><li>老屋、特殊物件、地段、屋況都可能影響貸款成數。</li><li>每月房貸最好不要壓到生活現金流極限。</li></ul></div>
-</article>
-<article id="stage-2" class="card checklist-stage">
-  <div class="stage-heading"><span>2</span><div><h3>先問銀行初步估貸</h3><p>在出價前先確認大概能貸多少，避免簽約後貸款不足。</p></div></div>
-  <div class="check-group"><h4>要確認</h4><div class="check-items"><label><input type="checkbox"> 可貸成數</label>
-<label><input type="checkbox"> 可貸金額</label>
-<label><input type="checkbox"> 房貸利率</label>
-<label><input type="checkbox"> 貸款年限</label>
-<label><input type="checkbox"> 是否有寬限期</label>
-<label><input type="checkbox"> 是否有綁約</label>
-<label><input type="checkbox"> 提前清償是否有違約金</label>
-<label><input type="checkbox"> 是否受第二戶、信用、收入負債比限制</label>
-<label><input type="checkbox"> 銀行是否接受該物件條件</label></div></div>
-<div class="check-group"><h4>需要準備</h4><div class="check-items"><label><input type="checkbox"> 身分證</label>
-<label><input type="checkbox"> 收入證明</label>
-<label><input type="checkbox"> 扣繳憑單</label>
-<label><input type="checkbox"> 薪轉紀錄</label>
-<label><input type="checkbox"> 勞保明細或在職證明</label>
-<label><input type="checkbox"> 其他貸款資料</label>
-<label><input type="checkbox"> 物件地址或謄本資料</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>初步估貸不等於正式核貸。</li><li>正式核貸仍要看銀行鑑價與個人信用。</li><li>建議至少問 2～3 家銀行。</li><li>不要只比利率，也要比貸款成數、年限、寬限期與綁約條件。</li></ul></div>
-</article>
-<article id="stage-3" class="card checklist-stage">
-  <div class="stage-heading"><span>3</span><div><h3>看屋、查屋況與產權</h3><p>確認房子本身、產權與周邊條件是否安全。</p></div></div>
-  <div class="check-group"><h4>房屋本身</h4><div class="check-items"><label><input type="checkbox"> 是否漏水</label>
+<div class="check-group"><h4>房屋本身</h4><div class="check-items"><label><input type="checkbox"> 是否漏水</label>
 <label><input type="checkbox"> 是否壁癌</label>
 <label><input type="checkbox"> 是否有裂縫</label>
 <label><input type="checkbox"> 是否有違建或二工</label>
@@ -280,33 +277,32 @@
 <label><input type="checkbox"> 採光是否可接受</label>
 <label><input type="checkbox"> 通風是否可接受</label>
 <label><input type="checkbox"> 是否可確認屋齡與結構安全</label></div></div>
-<div class="check-group"><h4>產權資料</h4><div class="check-items"><label><input type="checkbox"> 建物權狀</label>
-<label><input type="checkbox"> 土地權狀</label>
-<label><input type="checkbox"> 建物謄本</label>
-<label><input type="checkbox"> 土地謄本</label>
-<label><input type="checkbox"> 是否有抵押權</label>
-<label><input type="checkbox"> 是否有查封</label>
-<label><input type="checkbox"> 是否有限制登記</label>
+<div class="check-group"><h4>產權與社區</h4><div class="check-items"><label><input type="checkbox"> 建物權狀 / 土地權狀</label>
+<label><input type="checkbox"> 建物謄本 / 土地謄本</label>
+<label><input type="checkbox"> 是否有抵押權、查封或限制登記</label>
 <label><input type="checkbox"> 所有權人是否與賣方一致</label>
 <label><input type="checkbox"> 權狀坪數是否與廣告一致</label>
 <label><input type="checkbox"> 主建物、附屬建物、公設坪數是否合理</label>
-<label><input type="checkbox"> 停車位是獨立權狀、持分或使用權</label></div></div>
-<div class="check-group"><h4>社區與周邊</h4><div class="check-items"><label><input type="checkbox"> 管理費</label>
-<label><input type="checkbox"> 修繕基金</label>
+<label><input type="checkbox"> 停車位是獨立權狀、持分或使用權</label>
+<label><input type="checkbox"> 管理費與修繕基金</label>
 <label><input type="checkbox"> 管委會運作</label>
 <label><input type="checkbox"> 垃圾處理方式</label>
-<label><input type="checkbox"> 停車位權屬</label>
-<label><input type="checkbox"> 鄰居狀況</label>
-<label><input type="checkbox"> 噪音來源</label>
+<label><input type="checkbox"> 鄰居與噪音狀況</label>
 <label><input type="checkbox"> 淹水紀錄</label>
-<label><input type="checkbox"> 交通便利性</label>
-<label><input type="checkbox"> 學區、醫療、採買機能</label>
+<label><input type="checkbox"> 交通、學區、醫療、採買機能</label>
 <label><input type="checkbox"> 嫌惡設施或重大建設影響</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>中古屋建議白天、晚上、雨天都看一次。</li><li>有疑慮可請驗屋公司或專業人士協助。</li><li>仲介提供的不動產說明書要逐項核對。</li><li>權狀坪數不等於室內實際可用坪數。</li></ul></div>
-</article>
-<article id="stage-4" class="card checklist-stage">
-  <div class="stage-heading"><span>4</span><div><h3>出價、斡旋、要約</h3><p>向賣方正式提出購買條件。</p></div></div>
-  <div class="check-group"><h4>要確認</h4><div class="check-items"><label><input type="checkbox"> 出價金額</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>不要只看「房價 × 自備款比例」。</li><li>初步估貸不等於正式核貸，正式核貸仍要看銀行鑑價與個人信用。</li><li>中古屋建議白天、晚上、雨天都看一次。</li><li>仲介提供的不動產說明書要逐項核對。</li><li>權狀坪數不等於室內實際可用坪數。</li></ul></div>
+  </div>
+</details>
+<details id="stage-2" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">2</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>出價、斡旋、要約</strong><small>向賣方提出購買條件，價格以外的條件也要寫清楚。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>要確認</h4><div class="check-items"><label><input type="checkbox"> 出價金額</label>
 <label><input type="checkbox"> 付款方式</label>
 <label><input type="checkbox"> 是否需要貸款</label>
 <label><input type="checkbox"> 預計貸款金額</label>
@@ -320,11 +316,18 @@
 <div class="check-group"><h4>常見方式</h4><div class="check-items"><label><input type="checkbox"> 斡旋金</label>
 <label><input type="checkbox"> 要約書</label>
 <label><input type="checkbox"> 附帶條件書面化</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>斡旋金成立後可能會轉為定金。</li><li>要約內容要寫清楚，不要只寫價格。</li><li>若擔心貸款不足，應盡量加入貸款保護條款。</li><li>出價前先查實價登錄與附近成交行情。</li></ul></div>
-</article>
-<article id="stage-5" class="card checklist-stage">
-  <div class="stage-heading"><span>5</span><div><h3>簽買賣契約</h3><p>正式確定買賣雙方的權利義務。</p></div></div>
-  <div class="check-group"><h4>要確認</h4><div class="check-items"><label><input type="checkbox"> 買方資料</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>斡旋金成立後可能會轉為定金。</li><li>要約內容要寫清楚，不要只寫價格。</li><li>若擔心貸款不足，應盡量加入貸款保護條款。</li><li>出價前先查實價登錄與附近成交行情。</li></ul></div>
+  </div>
+</details>
+<details id="stage-3" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">3</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>簽買賣契約</strong><small>正式確定買賣雙方的權利義務。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>要確認</h4><div class="check-items"><label><input type="checkbox"> 買方資料</label>
 <label><input type="checkbox"> 賣方資料</label>
 <label><input type="checkbox"> 房屋地址</label>
 <label><input type="checkbox"> 土地與建物標示</label>
@@ -345,11 +348,18 @@
 <div class="check-group"><h4>簽約時常見付款</h4><div class="check-items"><label><input type="checkbox"> 定金</label>
 <label><input type="checkbox"> 簽約款</label>
 <label><input type="checkbox"> 履約保證專戶資訊</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>契約內容要逐條看完。</li><li>不清楚的條款要當場問清楚。</li><li>付款時盡量使用履約保證專戶。</li><li>不要把錢直接匯給不明帳戶。</li><li>口頭承諾要寫進契約才有保障。</li></ul></div>
-</article>
-<article id="stage-6" class="card checklist-stage">
-  <div class="stage-heading"><span>6</span><div><h3>正式申請房貸</h3><p>用買賣契約向銀行正式申請貸款。</p></div></div>
-  <div class="check-group"><h4>銀行流程</h4><div class="check-items"><label><input type="checkbox"> 送件申請</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>契約內容要逐條看完。</li><li>不清楚的條款要當場問清楚。</li><li>付款時盡量使用履約保證專戶。</li><li>不要把錢直接匯給不明帳戶。</li><li>口頭承諾要寫進契約才有保障。</li></ul></div>
+  </div>
+</details>
+<details id="stage-4" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">4</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>正式申請房貸</strong><small>用買賣契約向銀行正式申請貸款。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>銀行流程</h4><div class="check-items"><label><input type="checkbox"> 送件申請</label>
 <label><input type="checkbox"> 銀行鑑價</label>
 <label><input type="checkbox"> 信用審查</label>
 <label><input type="checkbox"> 收入審查</label>
@@ -375,11 +385,18 @@
 <label><input type="checkbox"> 月付金</label>
 <label><input type="checkbox"> 綁約年限</label>
 <label><input type="checkbox"> 提前清償違約金</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>銀行鑑價低，實際可貸金額也會降低。</li><li>核貸金額不足時，要能補足現金差額。</li><li>多問幾家銀行有助於提高成功率與條件比較。</li><li>不要在房貸審核期間新增大額貸款或信用卡分期。</li></ul></div>
-</article>
-<article id="stage-7" class="card checklist-stage">
-  <div class="stage-heading"><span>7</span><div><h3>用印</h3><p>買賣雙方在移轉登記與稅務申報文件上正式蓋章。</p></div></div>
-  <div class="check-group"><h4>要處理</h4><div class="check-items"><label><input type="checkbox"> 買賣移轉契約書用印</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>銀行鑑價低，實際可貸金額也會降低。</li><li>核貸金額不足時，要能補足現金差額。</li><li>多問幾家銀行有助於提高成功率與條件比較。</li><li>不要在房貸審核期間新增大額貸款或信用卡分期。</li></ul></div>
+  </div>
+</details>
+<details id="stage-5" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">5</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>用印</strong><small>買賣雙方在移轉登記與稅務申報文件上正式蓋章。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>要處理</h4><div class="check-items"><label><input type="checkbox"> 買賣移轉契約書用印</label>
 <label><input type="checkbox"> 稅務申報文件用印</label>
 <label><input type="checkbox"> 地政登記文件用印</label>
 <label><input type="checkbox"> 代書確認文件完整</label>
@@ -393,11 +410,18 @@
 <label><input type="checkbox"> 印鑑證明</label>
 <label><input type="checkbox"> 權狀</label>
 <label><input type="checkbox"> 原貸款資料（若尚有房貸）</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>用印後，流程會更接近正式移轉。</li><li>文件上的房屋標示、金額、姓名、身分證字號都要核對。</li><li>賣方若有原房貸，要確認清償與塗銷流程。</li></ul></div>
-</article>
-<article id="stage-8" class="card checklist-stage">
-  <div class="stage-heading"><span>8</span><div><h3>報稅、完稅</h3><p>完成房屋買賣相關稅費申報與繳納。</p></div></div>
-  <div class="check-group"><h4>買方常見負擔</h4><div class="check-items"><label><input type="checkbox"> 契稅</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>用印後，流程會更接近正式移轉。</li><li>文件上的房屋標示、金額、姓名、身分證字號都要核對。</li><li>賣方若有原房貸，要確認清償與塗銷流程。</li></ul></div>
+  </div>
+</details>
+<details id="stage-6" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">6</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>報稅、完稅</strong><small>完成房屋買賣相關稅費申報與繳納。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>買方常見負擔</h4><div class="check-items"><label><input type="checkbox"> 契稅</label>
 <label><input type="checkbox"> 印花稅</label>
 <label><input type="checkbox"> 登記規費</label>
 <label><input type="checkbox"> 代書費</label>
@@ -415,11 +439,18 @@
 <label><input type="checkbox"> 土地增值稅是否申報</label>
 <label><input type="checkbox"> 稅單金額是否正確</label>
 <label><input type="checkbox"> 完稅證明是否取得</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>稅費由誰負擔，應以契約約定為準。</li><li>完稅後才能繼續辦理所有權移轉登記。</li><li>稅單與繳費收據要保存。</li></ul></div>
-</article>
-<article id="stage-9" class="card checklist-stage">
-  <div class="stage-heading"><span>9</span><div><h3>銀行對保</h3><p>與銀行正式簽訂房貸契約。</p></div></div>
-  <div class="check-group"><h4>要確認</h4><div class="check-items"><label><input type="checkbox"> 貸款金額</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>稅費由誰負擔，應以契約約定為準。</li><li>完稅後才能繼續辦理所有權移轉登記。</li><li>稅單與繳費收據要保存。</li></ul></div>
+  </div>
+</details>
+<details id="stage-7" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">7</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>銀行對保</strong><small>與銀行正式簽訂房貸契約。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>要確認</h4><div class="check-items"><label><input type="checkbox"> 貸款金額</label>
 <label><input type="checkbox"> 貸款年限</label>
 <label><input type="checkbox"> 利率</label>
 <label><input type="checkbox"> 寬限期</label>
@@ -436,11 +467,18 @@
 <label><input type="checkbox"> 印章</label>
 <label><input type="checkbox"> 銀行存摺</label>
 <label><input type="checkbox"> 銀行要求的其他文件</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>對保前要確認貸款條件與之前談的一致。</li><li>對保後通常就會安排抵押權設定。</li><li>利率是固定、機動，或分段式，要看清楚。</li><li>寬限期不是不用還，只是暫時只繳利息。</li></ul></div>
-</article>
-<article id="stage-10" class="card checklist-stage">
-  <div class="stage-heading"><span>10</span><div><h3>抵押權設定</h3><p>銀行為了保障貸款債權，會在房屋上設定抵押權。</p></div></div>
-  <div class="check-group"><h4>要處理</h4><div class="check-items"><label><input type="checkbox"> 銀行準備抵押權設定文件</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>對保前要確認貸款條件與之前談的一致。</li><li>對保後通常就會安排抵押權設定。</li><li>利率是固定、機動，或分段式，要看清楚。</li><li>寬限期不是不用還，只是暫時只繳利息。</li></ul></div>
+  </div>
+</details>
+<details id="stage-8" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">8</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>抵押權設定</strong><small>銀行為了保障貸款債權，會在房屋上設定抵押權。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>要處理</h4><div class="check-items"><label><input type="checkbox"> 銀行準備抵押權設定文件</label>
 <label><input type="checkbox"> 買方或代書用印</label>
 <label><input type="checkbox"> 送地政事務所辦理</label>
 <label><input type="checkbox"> 完成抵押權設定</label>
@@ -450,11 +488,18 @@
 <label><input type="checkbox"> 設定標的是否正確</label>
 <label><input type="checkbox"> 設定完成時間</label>
 <label><input type="checkbox"> 設定規費金額</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>抵押權設定完成後，銀行才會進入撥款程序。</li><li>設定金額通常會高於實際貸款金額。</li><li>未來房貸清償後，要記得辦理抵押權塗銷。</li></ul></div>
-</article>
-<article id="stage-11" class="card checklist-stage">
-  <div class="stage-heading"><span>11</span><div><h3>所有權過戶</h3><p>將房屋與土地所有權正式移轉到買方名下。</p></div></div>
-  <div class="check-group"><h4>要處理</h4><div class="check-items"><label><input type="checkbox"> 完稅</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>抵押權設定完成後，銀行才會進入撥款程序。</li><li>設定金額通常會高於實際貸款金額。</li><li>未來房貸清償後，要記得辦理抵押權塗銷。</li></ul></div>
+  </div>
+</details>
+<details id="stage-9" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">9</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>所有權過戶</strong><small>將房屋與土地所有權正式移轉到買方名下。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>要處理</h4><div class="check-items"><label><input type="checkbox"> 完稅</label>
 <label><input type="checkbox"> 備妥移轉登記文件</label>
 <label><input type="checkbox"> 送地政事務所</label>
 <label><input type="checkbox"> 地政審查</label>
@@ -466,11 +511,18 @@
 <label><input type="checkbox"> 持分正確</label>
 <label><input type="checkbox"> 權狀內容正確</label>
 <label><input type="checkbox"> 是否仍有不該存在的限制登記</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>過戶完成後，法律上房子才正式屬於買方。</li><li>如果賣方原本有房貸，要同時確認原抵押權塗銷。</li><li>權狀領到後要妥善保存。</li></ul></div>
-</article>
-<article id="stage-12" class="card checklist-stage">
-  <div class="stage-heading"><span>12</span><div><h3>銀行撥款</h3><p>銀行將核准的房貸金額撥出，用於支付尾款或清償賣方原貸款。</p></div></div>
-  <div class="check-group"><h4>常見撥款方向</h4><div class="check-items"><label><input type="checkbox"> 撥入履約保證專戶</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>過戶完成後，法律上房子才正式屬於買方。</li><li>如果賣方原本有房貸，要同時確認原抵押權塗銷。</li><li>權狀領到後要妥善保存。</li></ul></div>
+  </div>
+</details>
+<details id="stage-10" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">10</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>銀行撥款</strong><small>銀行將核准的房貸金額撥出，用於支付尾款或清償賣方原貸款。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>常見撥款方向</h4><div class="check-items"><label><input type="checkbox"> 撥入履約保證專戶</label>
 <label><input type="checkbox"> 撥給賣方</label>
 <label><input type="checkbox"> 撥給賣方原貸款銀行，用於清償原房貸</label>
 <label><input type="checkbox"> 依代書與契約安排分配款項</label></div></div>
@@ -480,11 +532,18 @@
 <label><input type="checkbox"> 撥款文件完成</label>
 <label><input type="checkbox"> 撥款金額正確</label>
 <label><input type="checkbox"> 撥款日期正確</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>銀行通常不會在抵押權設定完成前撥款。</li><li>若賣方有原房貸，要確認清償與塗銷同步處理。</li><li>撥款金額不足時，買方要補足尾款。</li></ul></div>
-</article>
-<article id="stage-13" class="card checklist-stage">
-  <div class="stage-heading"><span>13</span><div><h3>交屋、點交、付尾款</h3><p>確認房屋現況無誤，完成鑰匙、權狀、款項與房屋移交。</p></div></div>
-  <div class="check-group"><h4>文件</h4><div class="check-items"><label><input type="checkbox"> 新權狀</label>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>銀行通常不會在抵押權設定完成前撥款。</li><li>若賣方有原房貸，要確認清償與塗銷同步處理。</li><li>撥款金額不足時，買方要補足尾款。</li></ul></div>
+  </div>
+</details>
+<details id="stage-11" class="card checklist-stage">
+  <summary class="stage-summary">
+    <span class="stage-number">11</span>
+    <span class="stage-status" aria-label="未開始">○</span>
+    <span class="stage-title"><strong>交屋、點交、付尾款</strong><small>確認房屋現況無誤，完成鑰匙、權狀、款項與房屋移交。</small></span>
+    <span class="stage-progress">0/0</span>
+  </summary>
+  <div class="stage-body">
+    <div class="check-group"><h4>文件</h4><div class="check-items"><label><input type="checkbox"> 新權狀</label>
 <label><input type="checkbox"> 買賣契約</label>
 <label><input type="checkbox"> 完稅證明</label>
 <label><input type="checkbox"> 付款紀錄</label>
@@ -514,13 +573,12 @@
 <label><input type="checkbox"> 冷氣是否正常</label>
 <label><input type="checkbox"> 插座是否正常</label>
 <label><input type="checkbox"> 廁所、廚房是否正常</label></div></div>
-  <div class="stage-notes"><strong>注意事項</strong><ul><li>點交時最好拍照或錄影存證。</li><li>若屋況與契約不符，不要急著簽點交完成。</li><li>尾款通常在確認交屋條件後支付或由履約保證專戶撥付。</li><li>交屋完成後，要盡快更換門鎖或重新設定門禁。</li></ul></div>
-</article>
+    <div class="stage-notes"><strong>注意事項</strong><ul><li>點交時最好拍照或錄影存證。</li><li>若屋況與契約不符，不要急著簽點交完成。</li><li>尾款通常在確認交屋條件後支付或由履約保證專戶撥付。</li><li>交屋完成後，要盡快更換門鎖或重新設定門禁。</li></ul></div>
+  </div>
+</details>
           </div>
         </div>
       </section>
-    </main>
-
     <div id="help-modal" class="help-modal hidden" aria-hidden="true">
       <div class="help-backdrop" data-close-help="true"></div>
       <div class="help-dialog card" role="dialog" aria-modal="true" aria-labelledby="help-title">
