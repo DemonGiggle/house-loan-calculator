@@ -14,6 +14,26 @@ const helpBody = document.querySelector("#help-body");
 const helpClose = document.querySelector("#help-close");
 const loanModeFields = document.querySelectorAll("[data-mode-field]");
 
+const tabButtons = document.querySelectorAll("[data-tab-target]");
+const tabPanels = document.querySelectorAll(".tab-panel");
+
+function switchTab(targetId) {
+  tabButtons.forEach((button) => {
+    const active = button.dataset.tabTarget === targetId;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+
+  tabPanels.forEach((panel) => {
+    panel.classList.toggle("active", panel.id === targetId);
+  });
+}
+
+tabButtons.forEach((button) => {
+  button.addEventListener("click", () => switchTab(button.dataset.tabTarget));
+});
+
+
 const helpContent = {
   price: "房屋成交總價。這是整個試算的基礎，頭期款、多數比例型費用都會跟著它一起變動。",
   loanInputMode: "你可以二選一：若還在抓銀行大概能貸幾成，就用『貸款成數』；若已經知道大概會核多少金額，就直接切到『貸款金額』。",
