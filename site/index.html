@@ -30,6 +30,7 @@
       <nav class="tab-nav" aria-label="主要功能切換">
         <button type="button" class="tab-button active" data-tab-target="calculator-panel" aria-selected="true">房貸試算</button>
         <button type="button" class="tab-button" data-tab-target="checklist-panel" aria-selected="false">買房檢核表</button>
+        <button type="button" class="tab-button" data-tab-target="tips-panel" aria-selected="false">買屋小技巧</button>
       </nav>
 
       <section id="calculator-panel" class="tab-panel active">
@@ -551,9 +552,58 @@
 </details>
           </div>
       </section>
-    <div id="help-modal" class="help-modal hidden" aria-hidden="true">
-      <div class="help-backdrop" data-close-help="true"></div>
-      <div class="help-dialog card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <section id="tips-panel" class="tab-panel">
+        <section class="tips-hero card">
+          <div>
+            <p class="eyebrow">home buying tips</p>
+            <h2>買屋前先做的小功課</h2>
+            <p class="hero-copy">
+              先把對交易安全和議價最有幫助的資訊查清楚，再決定要不要出價。
+              這個區塊會整理成一張一張卡片，方便快速複習。
+            </p>
+          </div>
+          <div class="hero-note">
+            <strong>這張卡先看：</strong>
+            登記簿謄本通常是最低成本、但資訊密度很高的一步，適合在出價前先查。
+          </div>
+        </section>
+
+        <section class="tips-grid" aria-label="買屋小技巧卡片">
+          <details class="card tips-card" open>
+            <summary class="tips-card-summary">
+              <div>
+                <p class="tips-tag">第一張卡</p>
+                <h3>登記簿謄本申請</h3>
+                <p class="sub">
+                  申請成本低、屬公開資訊，能快速幫你看懂產權、抵押狀況與議價線索。
+                </p>
+              </div>
+              <span class="tips-toggle" aria-hidden="true">展開</span>
+            </summary>
+            <div class="tips-card-body">
+              <p class="tips-source">
+                內容整理自
+                <a href="https://estate.ltn.com.tw/article/27675" target="_blank" rel="noreferrer">自由時報地產天下〈登記簿謄本申請〉</a>
+                ，並補充一般購屋實務中的使用方式。
+              </p>
+
+              <ul class="tips-list">
+                <li>先確認標示部：核對門牌、地號、用途、面積，避免廣告內容與實際登記資料有落差。</li>
+                <li>看所有權部：可判斷所有權人是否與賣方一致，也能看出取得原因，例如買賣、贈與或繼承。</li>
+                <li>幫助判斷議價空間：若屋主是繼承或贈與取得，通常成本壓力較低；若急著出售，價格彈性可能更大。</li>
+                <li>看他項權利部：可查目前是否仍有房貸、抵押權是幾順位，甚至是否出現多筆設定，作為賣方資金壓力的線索。</li>
+                <li>提前避開交易風險：若發現限制登記、查封、假扣押，或權利內容不單純，就要在簽約前先問清楚。</li>
+                <li>也能拿來做估貸前確認：把謄本資訊交給銀行、代書或仲介核對，能更早發現貸款或過戶流程上的障礙。</li>
+                <li>實務上很適合和實價登錄一起看：一邊比成交行情，一邊看屋主背景與貸款壓力，議價會更有底氣。</li>
+                <li>依文中整理，申請成本常見約每份 20 元；實際申請方式與費用仍以地政機關最新公告為準。</li>
+              </ul>
+            </div>
+          </details>
+        </section>
+      </section>
+      <div id="help-modal" class="help-modal hidden" aria-hidden="true">
+        <div class="help-backdrop" data-close-help="true"></div>
+        <div class="help-dialog card" role="dialog" aria-modal="true" aria-labelledby="help-title">
         <button type="button" class="help-close" id="help-close" aria-label="關閉說明">×</button>
         <h3 id="help-title">項目說明</h3>
         <p id="help-body"></p>
