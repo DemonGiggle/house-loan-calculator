@@ -100,21 +100,39 @@
             <div class="deed-tax-header">
               <div>
                 <h3>契稅計算基礎</h3>
-                <p class="sub">契稅通常看房屋評定現值，不是直接看成交總價。建議優先填正式數值；不知道時再用比例快速估算。</p>
+                <p class="sub">契稅通常看房屋評定現值，不是直接看成交總價。請先選擇你要用哪一種輸入方式。</p>
               </div>
+              <button type="button" class="help-trigger" data-help-key="deedTaxInputMode" aria-label="說明：契稅輸入方式">?</button>
+            </div>
+
+            <div class="loan-mode-options" role="radiogroup" aria-label="契稅輸入方式">
+              <label class="mode-option active">
+                <input type="radio" name="deedTaxInputMode" value="estimated" checked>
+                <span>
+                  <strong>快速估算</strong>
+                  <small>先用總價比例推估，適合還沒有房屋評定現值時</small>
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="deedTaxInputMode" value="direct">
+                <span>
+                  <strong>直接輸入房屋評定現值</strong>
+                  <small>較準，適合已拿到房屋稅單或地方稅務資料時</small>
+                </span>
+              </label>
             </div>
 
             <div class="field-grid">
-              <label class="field field-priority">
-                <span class="field-label">優先輸入：房屋評定現值（萬元）<button type="button" class="help-trigger" data-help-key="houseAssessedValueWan" aria-label="說明：房屋評定現值">?</button></span>
+              <label class="field hidden-by-mode field-priority" data-deed-tax-mode-field="direct">
+                <span class="field-label">房屋評定現值（萬元）<button type="button" class="help-trigger" data-help-key="houseAssessedValueWan" aria-label="說明：房屋評定現值">?</button></span>
                 <input id="houseAssessedValueWan" name="houseAssessedValueWan" type="number" min="0" step="1" placeholder="例如房屋稅單上的課稅現值">
-                <span class="field-note">有資料就填這裡，契稅會直接按這個金額計算。</span>
+                <span class="field-note">已切到這個模式時，契稅會直接按這個金額乘上稅率計算。</span>
               </label>
 
-              <label class="field">
-                <span class="field-label">快速估算：用總價推估房屋評定現值比例（%）<button type="button" class="help-trigger" data-help-key="assessedValueRatio" aria-label="說明：契稅快速估算比例">?</button></span>
+              <label class="field" data-deed-tax-mode-field="estimated">
+                <span class="field-label">用總價推估房屋評定現值比例（%）<button type="button" class="help-trigger" data-help-key="assessedValueRatio" aria-label="說明：契稅快速估算比例">?</button></span>
                 <input id="assessedValueRatio" name="assessedValueRatio" type="number" min="0" max="100" step="0.1" value="35">
-                <span class="field-note">只有在左邊留空時，系統才會改用這個比例估算。</span>
+                <span class="field-note">已切到這個模式時，系統會用成交總價乘上這個比例，作為契稅估算基礎。</span>
               </label>
             </div>
           </section>

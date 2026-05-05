@@ -7,6 +7,7 @@ test("normalizeInput clamps loan ratio, keeps assessed value, and renovation ran
   const input = normalizeInput({
     priceWan: "1500",
     loanRatio: "120",
+    deedTaxInputMode: "direct",
     houseAssessedValueWan: "120",
     areaPing: "20",
     renovationLowPerPingWan: "8",
@@ -15,6 +16,7 @@ test("normalizeInput clamps loan ratio, keeps assessed value, and renovation ran
   });
 
   assert.equal(input.loanRatio, 100);
+  assert.equal(input.deedTaxInputMode, "direct");
   assert.equal(input.houseAssessedValueWan, 120);
   assert.equal(input.renovationLowPerPingWan, 8);
   assert.equal(input.renovationHighPerPingWan, 8);
@@ -38,6 +40,7 @@ test("calculateBudget uses direct assessed value when provided", () => {
   const result = calculateBudget({
     priceWan: 1000,
     loanInputMode: "ratio",
+    deedTaxInputMode: "direct",
     loanRatio: 80,
     areaPing: 20,
     brokerFeeRate: 1,
@@ -75,6 +78,7 @@ test("calculateBudget falls back to estimated assessed value when direct value i
   const result = calculateBudget({
     priceWan: 1000,
     loanInputMode: "ratio",
+    deedTaxInputMode: "estimated",
     loanRatio: 80,
     areaPing: 20,
     brokerFeeRate: 1,
@@ -103,6 +107,40 @@ test("calculateBudget falls back to estimated assessed value when direct value i
   assert.equal(result.totalHigh, 3461600);
   assert.match(result.notes[1], /總價的 50%/);
   assert.match(result.breakdown.find((item) => item.key === "deedTax").detail, /總價 × 50%/);
+});
+
+test("calculateBudget shows missing direct assessed value state", () => {
+  const result = calculateBudget({
+    priceWan: 1000,
+    loanInputMode: "ratio",
+    deedTaxInputMode: "direct",
+    loanRatio: 80,
+    areaPing: 20,
+    brokerFeeRate: 1,
+    houseAssessedValueWan: 0,
+    assessedValueRatio: 50,
+    renovationLowPerPingWan: 2,
+    renovationHighPerPingWan: 4,
+    scrivenerFee: 30000,
+    mortgageRegistrationRate: 0.12,
+    deedTaxRate: 6,
+    stampTaxRate: 0.1,
+    bankFees: 12000,
+    bufferRate: 2,
+    includeBrokerFee: false,
+    includeDeedTax: true,
+    includeStampTax: false,
+    includeScrivenerFee: false,
+    includeMortgageRegistration: false,
+    includeBankFees: false,
+    includeRenovation: false,
+    includeBuffer: false
+  });
+
+  assert.equal(result.assessedValue, 0);
+  assert.equal(result.assessedValueSource, "direct_missing");
+  assert.equal(result.breakdown.find((item) => item.key === "deedTax").low, 0);
+  assert.match(result.notes[1], /目前還沒輸入金額/);
 });
 
 test("calculateBudget supports loan amount mode", () => {

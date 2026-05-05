@@ -120,8 +120,10 @@ legend,
 }
 
 .deed-tax-header {
-  display: grid;
-  gap: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
   margin-bottom: 16px;
 }
 
@@ -168,6 +170,12 @@ legend,
   cursor: pointer;
 }
 
+.mode-option.active {
+  border-color: var(--primary);
+  background: #eff6ff;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
+}
+
 .mode-option input {
   margin-top: 4px;
 }
@@ -175,6 +183,10 @@ legend,
 .mode-option span {
   display: grid;
   gap: 4px;
+}
+
+.mode-option.active strong {
+  color: var(--primary);
 }
 
 .hidden-by-mode {

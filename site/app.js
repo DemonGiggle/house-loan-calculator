@@ -13,6 +13,7 @@ const helpModal = document.querySelector("#help-modal");
 const helpBody = document.querySelector("#help-body");
 const helpClose = document.querySelector("#help-close");
 const loanModeFields = document.querySelectorAll("[data-mode-field]");
+const deedTaxModeFields = document.querySelectorAll("[data-deed-tax-mode-field]");
 
 function getChecklistBoxes(stage) {
   return [...stage.querySelectorAll('input[type="checkbox"]')];
@@ -85,6 +86,7 @@ const helpContent = {
   loanAmountWan: "直接輸入你預計要貸的總金額。系統會自動換算成對應貸款成數，並據此估算頭期款與相關費用。",
   areaPing: "用來估算裝潢費的坪數。你可以填室內坪數，若你習慣抓權狀坪數也可以，但結果通常會偏高一些。",
   brokerFeeRate: "買方向房仲支付的服務費比例。常見上限約為成交總價 2%，這裡可依實際談到的條件自行調整。",
+  deedTaxInputMode: "契稅請二選一：若你手上已有房屋稅單或地方稅務資料，建議直接輸入房屋評定現值；若還沒有，就先用總價比例快速估算。系統只會採用你目前選中的那一種方式。",
   houseAssessedValueWan: "建議直接填房屋評定現值，也就是房屋稅單上的課稅現值或地方稅務機關提供的標準價格。契稅會優先按這個金額乘稅率計算，最接近實務申報。",
   assessedValueRatio: "只有在你還不知道房屋評定現值時，才用成交總價的一個比例快速估算。這只是近似值，不是正式申報基礎。",
   renovationPerPing: "每坪裝潢抓一個低到高的區間，系統會估出裝潢總額範圍。若只想看純購屋現金需求，可取消納入裝潢。",
@@ -108,6 +110,10 @@ function currentLoanInputMode() {
   return form.querySelector('input[name="loanInputMode"]:checked')?.value || "ratio";
 }
 
+function currentDeedTaxInputMode() {
+  return form.querySelector('input[name="deedTaxInputMode"]:checked')?.value || "estimated";
+}
+
 function readForm() {
   const formData = new FormData(form);
   const checkbox = (name) => formData.get(name) === "on";
@@ -117,6 +123,7 @@ function readForm() {
     loanInputMode: currentLoanInputMode(),
     loanRatio: formData.get("loanRatio"),
     loanAmountWan: formData.get("loanAmountWan"),
+    deedTaxInputMode: currentDeedTaxInputMode(),
     areaPing: formData.get("areaPing"),
     brokerFeeRate: formData.get("brokerFeeRate"),
     houseAssessedValueWan: formData.get("houseAssessedValueWan"),
@@ -151,16 +158,44 @@ function syncLoanModeUI() {
       input.disabled = !active;
     }
   });
+
+  syncModeOptionCards("loanInputMode");
+}
+
+function syncDeedTaxModeUI() {
+  const mode = currentDeedTaxInputMode();
+
+  deedTaxModeFields.forEach((field) => {
+    const active = field.dataset.deedTaxModeField === mode;
+    field.classList.toggle("hidden-by-mode", !active);
+    const input = field.querySelector("input");
+    if (input) {
+      input.disabled = !active;
+    }
+  });
+
+  syncModeOptionCards("deedTaxInputMode");
+}
+
+function syncModeOptionCards(groupName) {
+  form.querySelectorAll(`input[name="${groupName}"]`).forEach((input) => {
+    input.closest(".mode-option")?.classList.toggle("active", input.checked);
+  });
 }
 
 function render() {
   syncLoanModeUI();
+  syncDeedTaxModeUI();
   const result = calculateBudget(readForm());
 
   recommendedRange.textContent = `${formatWan(result.totalLow)} ~ ${formatWan(result.totalHigh)}`;
   rangeSubtitle.textContent = result.input.loanInputMode === "amount"
     ? `已用貸款金額 ${formatWan(result.loanAmount)} 反推頭期款，並包含目前勾選的費用。`
-    : `包含頭期款與目前勾選的稅費、房仲、裝潢與緩衝。`;
+    : result.assessedValueSource === "direct"
+      ? "包含頭期款與目前勾選的費用；契稅目前依房屋評定現值計算。"
+      : result.assessedValueSource === "direct_missing"
+        ? "包含頭期款與目前勾選的費用；你已選房屋評定現值模式，但尚未輸入金額。"
+        : "包含頭期款與目前勾選的費用；契稅目前用總價比例快速估算。";
   loanAmount.textContent = formatCurrency(result.loanAmount);
   downPayment.textContent = formatCurrency(result.downPayment);
   cashNeedLow.textContent = formatCurrency(result.totalLow);

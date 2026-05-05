@@ -49,7 +49,9 @@ export function calculateBudget(rawInput) {
       included: input.includeDeedTax,
       detail: assessedValueSource === "direct"
         ? `房屋評定現值 ${formatWan(assessedValue)} × ${input.deedTaxRate}%`
-        : `快速估算：總價 × ${input.assessedValueRatio}% = ${formatWan(assessedValue)}`
+        : assessedValueSource === "direct_missing"
+          ? "已選擇房屋評定現值模式，請先輸入金額"
+          : `快速估算：總價 × ${input.assessedValueRatio}% = ${formatWan(assessedValue)}`
     },
     {
       key: "stampTax",
@@ -117,7 +119,9 @@ export function calculateBudget(rawInput) {
         : `本試算用房屋總價 ${formatWan(price)} 與貸款成數 ${input.loanRatio}% 估算，基本頭期款為 ${formatWan(downPayment)}。`,
       assessedValueSource === "direct"
         ? `契稅已直接用房屋評定現值 ${formatWan(assessedValue)} 計算，再套用 ${input.deedTaxRate}% 稅率估算。`
-        : `你尚未填房屋評定現值，因此契稅先以總價的 ${input.assessedValueRatio}% 快速估算為 ${formatWan(assessedValue)}，再套用 ${input.deedTaxRate}% 稅率估算。`,
+        : assessedValueSource === "direct_missing"
+          ? "你已切到房屋評定現值模式，但目前還沒輸入金額，所以契稅暫時顯示為 0。"
+          : `你目前使用快速估算模式，因此契稅先以總價的 ${input.assessedValueRatio}% 推估為 ${formatWan(assessedValue)}，再套用 ${input.deedTaxRate}% 稅率估算。`,
       `裝潢費以 ${input.areaPing} 坪、每坪 ${input.renovationLowPerPingWan}~${input.renovationHighPerPingWan} 萬估算。`,
       "若你想專注看簽約前現金準備，可取消裝潢或緩衝項目。"
     ]
@@ -127,6 +131,7 @@ export function calculateBudget(rawInput) {
 export function normalizeInput(rawInput) {
   const priceWan = numberOrZero(rawInput.priceWan);
   const loanInputMode = rawInput.loanInputMode === "amount" ? "amount" : "ratio";
+  const deedTaxInputMode = resolveDeedTaxInputMode(rawInput);
   const rawLoanAmountWan = numberOrZero(rawInput.loanAmountWan);
   const cappedLoanAmountWan = priceWan > 0 ? Math.min(rawLoanAmountWan, priceWan) : rawLoanAmountWan;
   const derivedLoanRatio = priceWan > 0 ? (cappedLoanAmountWan / priceWan) * 100 : 0;
@@ -134,6 +139,7 @@ export function normalizeInput(rawInput) {
   const normalized = {
     priceWan,
     loanInputMode,
+    deedTaxInputMode,
     loanAmountWan: cappedLoanAmountWan,
     loanRatio: loanInputMode === "amount"
       ? clamp(derivedLoanRatio, 0, 100)
@@ -176,10 +182,17 @@ function resolveLoanAmount(input, price) {
 }
 
 function resolveAssessedValue(input, price) {
-  if (input.houseAssessedValueWan > 0) {
+  if (input.deedTaxInputMode === "direct") {
+    if (input.houseAssessedValueWan > 0) {
+      return {
+        assessedValue: input.houseAssessedValueWan * 10000,
+        assessedValueSource: "direct"
+      };
+    }
+
     return {
-      assessedValue: input.houseAssessedValueWan * 10000,
-      assessedValueSource: "direct"
+      assessedValue: 0,
+      assessedValueSource: "direct_missing"
     };
   }
 
@@ -192,6 +205,14 @@ function resolveAssessedValue(input, price) {
 function numberOrZero(value) {
   const numeric = Number(value);
   return Number.isFinite(numeric) && numeric >= 0 ? numeric : 0;
+}
+
+function resolveDeedTaxInputMode(rawInput) {
+  if (rawInput.deedTaxInputMode === "direct" || rawInput.deedTaxInputMode === "estimated") {
+    return rawInput.deedTaxInputMode;
+  }
+
+  return numberOrZero(rawInput.houseAssessedValueWan) > 0 ? "direct" : "estimated";
 }
 
 function clamp(value, min, max) {
