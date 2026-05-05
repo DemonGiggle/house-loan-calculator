@@ -3,10 +3,11 @@ import assert from "node:assert/strict";
 
 import { calculateBudget, normalizeInput } from "../site/calculator.js";
 
-test("normalizeInput clamps loan ratio and renovation range", () => {
+test("normalizeInput clamps loan ratio, keeps assessed value, and renovation range", () => {
   const input = normalizeInput({
     priceWan: "1500",
     loanRatio: "120",
+    houseAssessedValueWan: "120",
     areaPing: "20",
     renovationLowPerPingWan: "8",
     renovationHighPerPingWan: "3",
@@ -14,6 +15,7 @@ test("normalizeInput clamps loan ratio and renovation range", () => {
   });
 
   assert.equal(input.loanRatio, 100);
+  assert.equal(input.houseAssessedValueWan, 120);
   assert.equal(input.renovationLowPerPingWan, 8);
   assert.equal(input.renovationHighPerPingWan, 8);
   assert.equal(input.includeBrokerFee, true);
@@ -32,7 +34,44 @@ test("normalizeInput derives loan ratio from loan amount mode", () => {
   assert.equal(input.loanRatio, 80);
 });
 
-test("calculateBudget includes selected cost items in range", () => {
+test("calculateBudget uses direct assessed value when provided", () => {
+  const result = calculateBudget({
+    priceWan: 1000,
+    loanInputMode: "ratio",
+    loanRatio: 80,
+    areaPing: 20,
+    brokerFeeRate: 1,
+    houseAssessedValueWan: 120,
+    assessedValueRatio: 50,
+    renovationLowPerPingWan: 2,
+    renovationHighPerPingWan: 4,
+    scrivenerFee: 30000,
+    mortgageRegistrationRate: 0.12,
+    deedTaxRate: 6,
+    stampTaxRate: 0.1,
+    bankFees: 12000,
+    bufferRate: 2,
+    includeBrokerFee: true,
+    includeDeedTax: true,
+    includeStampTax: true,
+    includeScrivenerFee: true,
+    includeMortgageRegistration: true,
+    includeBankFees: true,
+    includeRenovation: true,
+    includeBuffer: true
+  });
+
+  assert.equal(result.loanAmount, 8000000);
+  assert.equal(result.downPayment, 2000000);
+  assert.equal(result.assessedValue, 1200000);
+  assert.equal(result.assessedValueSource, "direct");
+  assert.equal(result.totalLow, 2833600);
+  assert.equal(result.totalHigh, 3233600);
+  assert.match(result.notes[1], /房屋評定現值 120 萬/);
+  assert.match(result.breakdown.find((item) => item.key === "deedTax").detail, /房屋評定現值 120 萬/);
+});
+
+test("calculateBudget falls back to estimated assessed value when direct value is missing", () => {
   const result = calculateBudget({
     priceWan: 1000,
     loanInputMode: "ratio",
@@ -58,10 +97,12 @@ test("calculateBudget includes selected cost items in range", () => {
     includeBuffer: true
   });
 
-  assert.equal(result.loanAmount, 8000000);
-  assert.equal(result.downPayment, 2000000);
+  assert.equal(result.assessedValue, 5000000);
+  assert.equal(result.assessedValueSource, "estimated");
   assert.equal(result.totalLow, 3061600);
   assert.equal(result.totalHigh, 3461600);
+  assert.match(result.notes[1], /總價的 50%/);
+  assert.match(result.breakdown.find((item) => item.key === "deedTax").detail, /總價 × 50%/);
 });
 
 test("calculateBudget supports loan amount mode", () => {

@@ -94,12 +94,32 @@
               <span class="field-label">房仲費（買方，%）<button type="button" class="help-trigger" data-help-key="brokerFeeRate" aria-label="說明：房仲費">?</button></span>
               <input id="brokerFeeRate" name="brokerFeeRate" type="number" min="0" step="0.1" value="1">
             </label>
+          </div>
 
-            <label class="field">
-              <span class="field-label">契稅估值比例（相對總價 %）<button type="button" class="help-trigger" data-help-key="assessedValueRatio" aria-label="說明：契稅估值比例">?</button></span>
-              <input id="assessedValueRatio" name="assessedValueRatio" type="number" min="0" max="100" step="0.1" value="35">
-            </label>
+          <section class="card inset deed-tax-panel">
+            <div class="deed-tax-header">
+              <div>
+                <h3>契稅計算基礎</h3>
+                <p class="sub">契稅通常看房屋評定現值，不是直接看成交總價。建議優先填正式數值；不知道時再用比例快速估算。</p>
+              </div>
+            </div>
 
+            <div class="field-grid">
+              <label class="field field-priority">
+                <span class="field-label">優先輸入：房屋評定現值（萬元）<button type="button" class="help-trigger" data-help-key="houseAssessedValueWan" aria-label="說明：房屋評定現值">?</button></span>
+                <input id="houseAssessedValueWan" name="houseAssessedValueWan" type="number" min="0" step="1" placeholder="例如房屋稅單上的課稅現值">
+                <span class="field-note">有資料就填這裡，契稅會直接按這個金額計算。</span>
+              </label>
+
+              <label class="field">
+                <span class="field-label">快速估算：用總價推估房屋評定現值比例（%）<button type="button" class="help-trigger" data-help-key="assessedValueRatio" aria-label="說明：契稅快速估算比例">?</button></span>
+                <input id="assessedValueRatio" name="assessedValueRatio" type="number" min="0" max="100" step="0.1" value="35">
+                <span class="field-note">只有在左邊留空時，系統才會改用這個比例估算。</span>
+              </label>
+            </div>
+          </section>
+
+          <div class="field-grid">
             <label class="field">
               <span class="field-label">裝潢單坪估價（萬元）<button type="button" class="help-trigger" data-help-key="renovationPerPing" aria-label="說明：裝潢單坪估價">?</button></span>
               <div class="range-inputs">
@@ -108,9 +128,7 @@
                 <input id="renovationHighPerPing" name="renovationHighPerPing" type="number" min="0" step="0.5" value="8">
               </div>
             </label>
-          </div>
 
-          <div class="field-grid">
             <label class="field">
               <span class="field-label">代書 / 設定相關固定費（元）<button type="button" class="help-trigger" data-help-key="scrivenerFee" aria-label="說明：代書與設定固定費">?</button></span>
               <input id="scrivenerFee" name="scrivenerFee" type="number" min="0" step="1000" value="30000">
@@ -122,7 +140,7 @@
             </label>
 
             <label class="field">
-              <span class="field-label">契稅稅率（估值 %）<button type="button" class="help-trigger" data-help-key="deedTaxRate" aria-label="說明：契稅稅率">?</button></span>
+              <span class="field-label">契稅稅率（%）<button type="button" class="help-trigger" data-help-key="deedTaxRate" aria-label="說明：契稅稅率">?</button></span>
               <input id="deedTaxRate" name="deedTaxRate" type="number" min="0" step="0.1" value="6">
             </label>
 

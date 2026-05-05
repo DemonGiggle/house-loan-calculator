@@ -21,7 +21,7 @@ export function calculateBudget(rawInput) {
   const price = input.priceWan * 10000;
   const loanAmount = resolveLoanAmount(input, price);
   const downPayment = Math.max(price - loanAmount, 0);
-  const assessedValue = price * percent(input.assessedValueRatio);
+  const { assessedValue, assessedValueSource } = resolveAssessedValue(input, price);
 
   const renovationLow = input.areaPing * input.renovationLowPerPingWan * 10000;
   const renovationHigh = input.areaPing * input.renovationHighPerPingWan * 10000;
@@ -46,7 +46,10 @@ export function calculateBudget(rawInput) {
       label: "契稅",
       low: assessedValue * percent(input.deedTaxRate),
       high: assessedValue * percent(input.deedTaxRate),
-      included: input.includeDeedTax
+      included: input.includeDeedTax,
+      detail: assessedValueSource === "direct"
+        ? `房屋評定現值 ${formatWan(assessedValue)} × ${input.deedTaxRate}%`
+        : `快速估算：總價 × ${input.assessedValueRatio}% = ${formatWan(assessedValue)}`
     },
     {
       key: "stampTax",
@@ -102,6 +105,7 @@ export function calculateBudget(rawInput) {
     loanAmount,
     downPayment,
     assessedValue,
+    assessedValueSource,
     breakdown,
     totalLow: roundCurrency(totalLow),
     totalHigh: roundCurrency(totalHigh),
@@ -111,7 +115,9 @@ export function calculateBudget(rawInput) {
       input.loanInputMode === "amount"
         ? `本試算用房屋總價 ${formatWan(price)} 與貸款金額 ${formatWan(loanAmount)} 估算，對應貸款成數約 ${input.loanRatio.toFixed(1)}%，基本頭期款為 ${formatWan(downPayment)}。`
         : `本試算用房屋總價 ${formatWan(price)} 與貸款成數 ${input.loanRatio}% 估算，基本頭期款為 ${formatWan(downPayment)}。`,
-      `契稅以總價的 ${input.assessedValueRatio}% 作為估值基礎，再套用 ${input.deedTaxRate}% 稅率估算。`,
+      assessedValueSource === "direct"
+        ? `契稅已直接用房屋評定現值 ${formatWan(assessedValue)} 計算，再套用 ${input.deedTaxRate}% 稅率估算。`
+        : `你尚未填房屋評定現值，因此契稅先以總價的 ${input.assessedValueRatio}% 快速估算為 ${formatWan(assessedValue)}，再套用 ${input.deedTaxRate}% 稅率估算。`,
       `裝潢費以 ${input.areaPing} 坪、每坪 ${input.renovationLowPerPingWan}~${input.renovationHighPerPingWan} 萬估算。`,
       "若你想專注看簽約前現金準備，可取消裝潢或緩衝項目。"
     ]
@@ -134,6 +140,7 @@ export function normalizeInput(rawInput) {
       : clamp(numberOrZero(rawInput.loanRatio), 0, 100),
     areaPing: numberOrZero(rawInput.areaPing),
     brokerFeeRate: numberOrZero(rawInput.brokerFeeRate),
+    houseAssessedValueWan: numberOrZero(rawInput.houseAssessedValueWan),
     assessedValueRatio: clamp(numberOrZero(rawInput.assessedValueRatio), 0, 100),
     renovationLowPerPingWan: numberOrZero(rawInput.renovationLowPerPingWan),
     renovationHighPerPingWan: numberOrZero(rawInput.renovationHighPerPingWan),
@@ -166,6 +173,20 @@ function resolveLoanAmount(input, price) {
   }
 
   return price * percent(input.loanRatio);
+}
+
+function resolveAssessedValue(input, price) {
+  if (input.houseAssessedValueWan > 0) {
+    return {
+      assessedValue: input.houseAssessedValueWan * 10000,
+      assessedValueSource: "direct"
+    };
+  }
+
+  return {
+    assessedValue: price * percent(input.assessedValueRatio),
+    assessedValueSource: "estimated"
+  };
 }
 
 function numberOrZero(value) {

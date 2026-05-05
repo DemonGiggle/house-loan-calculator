@@ -79,17 +79,18 @@ tabButtons.forEach((button) => {
 
 
 const helpContent = {
-  price: "房屋成交總價。這是整個試算的基礎，頭期款、多數比例型費用都會跟著它一起變動。",
+  price: "房屋成交總價。這是整個試算的基礎，頭期款與多數比例型費用都會跟著它一起變動；契稅若有填房屋評定現值，會優先用那個金額。",
   loanInputMode: "你可以二選一：若還在抓銀行大概能貸幾成，就用『貸款成數』；若已經知道大概會核多少金額，就直接切到『貸款金額』。",
   loanRatio: "銀行願意貸給你的比例。像 80% 代表總價 1500 萬時，預估可貸 1200 萬，剩下 300 萬就是基本頭期款。",
   loanAmountWan: "直接輸入你預計要貸的總金額。系統會自動換算成對應貸款成數，並據此估算頭期款與相關費用。",
   areaPing: "用來估算裝潢費的坪數。你可以填室內坪數，若你習慣抓權狀坪數也可以，但結果通常會偏高一些。",
   brokerFeeRate: "買方向房仲支付的服務費比例。常見上限約為成交總價 2%，這裡可依實際談到的條件自行調整。",
-  assessedValueRatio: "契稅通常不是直接用成交價課，而是用房屋評定現值或移轉現值估算。這裡先用總價的一個比例近似。",
+  houseAssessedValueWan: "建議直接填房屋評定現值，也就是房屋稅單上的課稅現值或地方稅務機關提供的標準價格。契稅會優先按這個金額乘稅率計算，最接近實務申報。",
+  assessedValueRatio: "只有在你還不知道房屋評定現值時，才用成交總價的一個比例快速估算。這只是近似值，不是正式申報基礎。",
   renovationPerPing: "每坪裝潢抓一個低到高的區間，系統會估出裝潢總額範圍。若只想看純購屋現金需求，可取消納入裝潢。",
   scrivenerFee: "代書、設定、文件申辦等常見固定支出。不同地區與案件會有差異，這裡先用一筆固定值估算。",
   mortgageRegistrationRate: "房貸設定相關規費，通常會隨貸款金額增加。這裡用貸款額的百分比先粗估。",
-  deedTaxRate: "契稅稅率，會套用在前面的估值基礎上。常見自用住宅可能會遇到 6% 這類抓法，但實際仍以申報條件為準。",
+  deedTaxRate: "契稅稅率會套用在房屋評定現值；若你沒填正式現值，才會套用在快速估算出的基礎上。一般買賣常見 6%，仍以實際申報條件為準。",
   stampTaxRate: "印花稅用成交總價的比例簡化估算。這是方便試算的近似值，真實金額仍以實際文件與申報方式為準。",
   bankFees: "銀行端常見的一次性費用，例如開辦費、鑑價費、徵信費等，可依你接觸到的銀行方案自行調整。",
   bufferRate: "額外預留的安全墊，用來吸收零星雜支、估價落差、搬家或臨時支出。這筆常常能救場，我不建議抓成 0。",
@@ -118,6 +119,7 @@ function readForm() {
     loanAmountWan: formData.get("loanAmountWan"),
     areaPing: formData.get("areaPing"),
     brokerFeeRate: formData.get("brokerFeeRate"),
+    houseAssessedValueWan: formData.get("houseAssessedValueWan"),
     assessedValueRatio: formData.get("assessedValueRatio"),
     renovationLowPerPingWan: formData.get("renovationLowPerPing"),
     renovationHighPerPingWan: formData.get("renovationHighPerPing"),
@@ -166,7 +168,10 @@ function render() {
 
   breakdown.innerHTML = result.breakdown
     .map((item) => {
-      const status = item.included ? "" : "（未納入）";
+      const meta = [
+        item.included ? "" : "（未納入）",
+        item.detail || ""
+      ].filter(Boolean);
       const value = item.low === item.high
         ? formatWan(item.low)
         : `${formatWan(item.low)} ~ ${formatWan(item.high)}`;
@@ -175,7 +180,7 @@ function render() {
         <div class="breakdown-row">
           <div>
             <strong>${item.label}</strong>
-            <div class="sub">${status}</div>
+            ${meta.map((text) => `<div class="sub">${text}</div>`).join("")}
           </div>
           <div class="breakdown-range">${value}</div>
         </div>
