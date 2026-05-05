@@ -1,6 +1,8 @@
-# house-loan-calculator
+# 買房筆記
 
-An opinionated static calculator for estimating the upfront cash needed when buying a home in Taiwan.
+> 懂越多、越安心
+
+A static home-buying companion for estimating upfront cash, checking the buying process, and collecting practical notes for purchasing a home in Taiwan.
 
 ## Local usage
 
