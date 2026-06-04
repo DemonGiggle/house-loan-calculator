@@ -7,6 +7,11 @@ const loanAmount = document.querySelector("#loanAmount");
 const downPayment = document.querySelector("#downPayment");
 const cashNeedLow = document.querySelector("#cashNeedLow");
 const cashNeedHigh = document.querySelector("#cashNeedHigh");
+const mortgagePrincipal = document.querySelector("#mortgagePrincipal");
+const mortgageInterest = document.querySelector("#mortgageInterest");
+const mortgageTotalPayment = document.querySelector("#mortgageTotalPayment");
+const mortgageMonthlyPayment = document.querySelector("#mortgageMonthlyPayment");
+const mortgageSummary = document.querySelector("#mortgageSummary");
 const breakdown = document.querySelector("#breakdown");
 const notes = document.querySelector("#notes");
 const helpModal = document.querySelector("#help-modal");
@@ -84,6 +89,9 @@ const helpContent = {
   loanInputMode: "你可以二選一：若還在抓銀行大概能貸幾成，就用『貸款成數』；若已經知道大概會核多少金額，就直接切到『貸款金額』。",
   loanRatio: "銀行願意貸給你的比例。像 80% 代表總價 1500 萬時，預估可貸 1200 萬，剩下 300 萬就是基本頭期款。",
   loanAmountWan: "直接輸入你預計要貸的總金額。系統會自動換算成對應貸款成數，並據此估算頭期款與相關費用。",
+  mortgageCalculator: "這段是銀行房貸試算區，會直接使用上方的貸款金額，再按你填的年利率與貸款年限，估算本息平均攤還下的月還款、總利息與本息合計。",
+  mortgageAnnualRate: "填銀行給你的房貸年利率，例如 2.35%。這裡用本息平均攤還公式估算每月月付與總利息。",
+  mortgageYears: "貸款期數，以年為單位。像 30 年就是 360 期；年限越長，通常月付越低，但總利息越高。",
   areaPing: "用來估算裝潢費的坪數。你可以填室內坪數，若你習慣抓權狀坪數也可以，但結果通常會偏高一些。",
   brokerFeeRate: "買方向房仲支付的服務費比例。常見上限約為成交總價 2%，這裡可依實際談到的條件自行調整。",
   deedTaxInputMode: "契稅請二選一：若你手上已有房屋稅單或地方稅務資料，建議直接輸入房屋評定現值；若還沒有，就先用總價比例快速估算。系統只會採用你目前選中的那一種方式。",
@@ -123,6 +131,8 @@ function readForm() {
     loanInputMode: currentLoanInputMode(),
     loanRatio: formData.get("loanRatio"),
     loanAmountWan: formData.get("loanAmountWan"),
+    mortgageAnnualRate: formData.get("mortgageAnnualRate"),
+    mortgageYears: formData.get("mortgageYears"),
     deedTaxInputMode: currentDeedTaxInputMode(),
     areaPing: formData.get("areaPing"),
     brokerFeeRate: formData.get("brokerFeeRate"),
@@ -200,6 +210,13 @@ function render() {
   downPayment.textContent = formatCurrency(result.downPayment);
   cashNeedLow.textContent = formatCurrency(result.totalLow);
   cashNeedHigh.textContent = formatCurrency(result.totalHigh);
+  mortgagePrincipal.textContent = formatCurrency(result.mortgage.principal);
+  mortgageInterest.textContent = formatCurrency(result.mortgage.totalInterest);
+  mortgageTotalPayment.textContent = formatCurrency(result.mortgage.totalPayment);
+  mortgageMonthlyPayment.textContent = formatCurrency(result.mortgage.monthlyPayment);
+  mortgageSummary.textContent = result.mortgage.months > 0
+    ? `以 ${result.input.mortgageAnnualRate}% 年利率、${result.input.mortgageYears} 年本息平均攤還估算，共 ${result.mortgage.months} 期。`
+    : "請先確認貸款年限大於 0，才會算出每月月還款。";
 
   breakdown.innerHTML = result.breakdown
     .map((item) => {

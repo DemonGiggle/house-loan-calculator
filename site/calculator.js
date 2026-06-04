@@ -22,6 +22,7 @@ export function calculateBudget(rawInput) {
   const loanAmount = resolveLoanAmount(input, price);
   const downPayment = Math.max(price - loanAmount, 0);
   const { assessedValue, assessedValueSource } = resolveAssessedValue(input, price);
+  const mortgage = calculateMortgageSummary(loanAmount, input.mortgageAnnualRate, input.mortgageYears);
 
   const renovationLow = input.areaPing * input.renovationLowPerPingWan * 10000;
   const renovationHigh = input.areaPing * input.renovationHighPerPingWan * 10000;
@@ -108,6 +109,7 @@ export function calculateBudget(rawInput) {
     downPayment,
     assessedValue,
     assessedValueSource,
+    mortgage,
     breakdown,
     totalLow: roundCurrency(totalLow),
     totalHigh: roundCurrency(totalHigh),
@@ -123,6 +125,9 @@ export function calculateBudget(rawInput) {
           ? "你已切到房屋評定現值模式，但目前還沒輸入金額，所以契稅暫時顯示為 0。"
           : `你目前使用快速估算模式，因此契稅先以總價的 ${input.assessedValueRatio}% 推估為 ${formatWan(assessedValue)}，再套用 ${input.deedTaxRate}% 稅率估算。`,
       `裝潢費以 ${input.areaPing} 坪、每坪 ${input.renovationLowPerPingWan}~${input.renovationHighPerPingWan} 萬估算。`,
+      mortgage.months > 0
+        ? `若以 ${input.mortgageAnnualRate}% 年利率、${input.mortgageYears} 年本息平均攤還估算，月還款約 ${formatCurrency(mortgage.monthlyPayment)}。`
+        : "若要看銀行月付試算，請先確認貸款金額與貸款年限大於 0。",
       "若你想專注看簽約前現金準備，可取消裝潢或緩衝項目。"
     ]
   };
@@ -144,6 +149,8 @@ export function normalizeInput(rawInput) {
     loanRatio: loanInputMode === "amount"
       ? clamp(derivedLoanRatio, 0, 100)
       : clamp(numberOrZero(rawInput.loanRatio), 0, 100),
+    mortgageAnnualRate: numberOrZero(rawInput.mortgageAnnualRate),
+    mortgageYears: numberOrZero(rawInput.mortgageYears),
     areaPing: numberOrZero(rawInput.areaPing),
     brokerFeeRate: numberOrZero(rawInput.brokerFeeRate),
     houseAssessedValueWan: numberOrZero(rawInput.houseAssessedValueWan),
@@ -199,6 +206,38 @@ function resolveAssessedValue(input, price) {
   return {
     assessedValue: price * percent(input.assessedValueRatio),
     assessedValueSource: "estimated"
+  };
+}
+
+function calculateMortgageSummary(principal, annualRatePercent, years) {
+  const months = Math.max(Math.round(years * 12), 0);
+
+  if (principal <= 0 || months <= 0) {
+    return {
+      principal: roundCurrency(Math.max(principal, 0)),
+      totalInterest: 0,
+      totalPayment: roundCurrency(Math.max(principal, 0)),
+      monthlyPayment: 0,
+      months,
+      annualRatePercent
+    };
+  }
+
+  const monthlyRate = percent(annualRatePercent) / 12;
+  const rawMonthlyPayment = monthlyRate === 0
+    ? principal / months
+    : principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
+  const monthlyPayment = roundCurrency(rawMonthlyPayment);
+  const totalPayment = roundCurrency(monthlyPayment * months);
+  const totalInterest = roundCurrency(totalPayment - principal);
+
+  return {
+    principal: roundCurrency(principal),
+    totalInterest,
+    totalPayment,
+    monthlyPayment,
+    months,
+    annualRatePercent
   };
 }
 

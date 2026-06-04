@@ -28,12 +28,16 @@ test("normalizeInput derives loan ratio from loan amount mode", () => {
   const input = normalizeInput({
     priceWan: "1500",
     loanInputMode: "amount",
-    loanAmountWan: "1200"
+    loanAmountWan: "1200",
+    mortgageAnnualRate: "2.35",
+    mortgageYears: "30"
   });
 
   assert.equal(input.loanInputMode, "amount");
   assert.equal(input.loanAmountWan, 1200);
   assert.equal(input.loanRatio, 80);
+  assert.equal(input.mortgageAnnualRate, 2.35);
+  assert.equal(input.mortgageYears, 30);
 });
 
 test("calculateBudget uses direct assessed value when provided", () => {
@@ -148,6 +152,8 @@ test("calculateBudget supports loan amount mode", () => {
     priceWan: 1000,
     loanInputMode: "amount",
     loanAmountWan: 750,
+    mortgageAnnualRate: 2.35,
+    mortgageYears: 30,
     areaPing: 20,
     brokerFeeRate: 1,
     assessedValueRatio: 50,
@@ -174,6 +180,11 @@ test("calculateBudget supports loan amount mode", () => {
   assert.equal(result.input.loanRatio, 75);
   assert.equal(result.totalLow, 2500000);
   assert.equal(result.totalHigh, 2500000);
+  assert.equal(result.mortgage.months, 360);
+  assert.equal(result.mortgage.principal, 7500000);
+  assert.equal(result.mortgage.monthlyPayment, 29052);
+  assert.equal(result.mortgage.totalInterest, 2958720);
+  assert.equal(result.mortgage.totalPayment, 10458720);
 });
 
 test("calculateBudget can exclude optional fees", () => {
@@ -203,4 +214,37 @@ test("calculateBudget can exclude optional fees", () => {
 
   assert.equal(result.totalLow, 2000000);
   assert.equal(result.totalHigh, 2000000);
+});
+
+test("calculateBudget supports zero-interest mortgage calculation", () => {
+  const result = calculateBudget({
+    priceWan: 600,
+    loanRatio: 50,
+    mortgageAnnualRate: 0,
+    mortgageYears: 20,
+    areaPing: 0,
+    brokerFeeRate: 0,
+    assessedValueRatio: 0,
+    renovationLowPerPingWan: 0,
+    renovationHighPerPingWan: 0,
+    scrivenerFee: 0,
+    mortgageRegistrationRate: 0,
+    deedTaxRate: 0,
+    stampTaxRate: 0,
+    bankFees: 0,
+    bufferRate: 0,
+    includeBrokerFee: false,
+    includeDeedTax: false,
+    includeStampTax: false,
+    includeScrivenerFee: false,
+    includeMortgageRegistration: false,
+    includeBankFees: false,
+    includeRenovation: false,
+    includeBuffer: false
+  });
+
+  assert.equal(result.mortgage.principal, 3000000);
+  assert.equal(result.mortgage.monthlyPayment, 12500);
+  assert.equal(result.mortgage.totalInterest, 0);
+  assert.equal(result.mortgage.totalPayment, 3000000);
 });

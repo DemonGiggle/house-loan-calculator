@@ -84,6 +84,28 @@
             </div>
           </section>
 
+          <section class="card inset mortgage-panel">
+            <div class="deed-tax-header">
+              <div>
+                <h3>銀行房貸試算</h3>
+                <p class="sub">這一段會直接使用上方推算出的貸款金額，幫你估每月月付與整段貸款的本金、利息與本息合計。</p>
+              </div>
+              <button type="button" class="help-trigger" data-help-key="mortgageCalculator" aria-label="說明：銀行房貸試算">?</button>
+            </div>
+
+            <div class="field-grid">
+              <label class="field">
+                <span class="field-label">房貸年利率（%）<button type="button" class="help-trigger" data-help-key="mortgageAnnualRate" aria-label="說明：房貸年利率">?</button></span>
+                <input id="mortgageAnnualRate" name="mortgageAnnualRate" type="number" min="0" step="0.01" value="2.35">
+              </label>
+
+              <label class="field">
+                <span class="field-label">貸款年限（年）<button type="button" class="help-trigger" data-help-key="mortgageYears" aria-label="說明：貸款年限">?</button></span>
+                <input id="mortgageYears" name="mortgageYears" type="number" min="1" step="1" value="30">
+              </label>
+            </div>
+          </section>
+
           <div class="field-grid">
             <label class="field">
               <span class="field-label">室內 / 權狀坪數（坪）<button type="button" class="help-trigger" data-help-key="areaPing" aria-label="說明：室內或權狀坪數">?</button></span>
@@ -212,6 +234,17 @@
               <div><dt>總現金需求（低）</dt><dd id="cashNeedLow">--</dd></div>
               <div><dt>總現金需求（高）</dt><dd id="cashNeedHigh">--</dd></div>
             </dl>
+          </article>
+
+          <article class="card result-card">
+            <h2>銀行房貸計算器</h2>
+            <dl class="stats">
+              <div><dt>本金</dt><dd id="mortgagePrincipal">--</dd></div>
+              <div><dt>利息</dt><dd id="mortgageInterest">--</dd></div>
+              <div><dt>本息合計</dt><dd id="mortgageTotalPayment">--</dd></div>
+              <div><dt>月還款</dt><dd id="mortgageMonthlyPayment">--</dd></div>
+            </dl>
+            <p class="sub mortgage-summary" id="mortgageSummary">--</p>
           </article>
 
           <article class="card result-card">
