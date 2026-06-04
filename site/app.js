@@ -1,4 +1,4 @@
-import { calculateBudget, formatCurrency, formatWan } from "./calculator.js";
+import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260604b";
 
 const form = document.querySelector("#calculator-form");
 const recommendedRange = document.querySelector("#recommendedRange");
@@ -19,6 +19,46 @@ const helpBody = document.querySelector("#help-body");
 const helpClose = document.querySelector("#help-close");
 const loanModeFields = document.querySelectorAll("[data-mode-field]");
 const deedTaxModeFields = document.querySelectorAll("[data-deed-tax-mode-field]");
+
+function percent(value) {
+  return value / 100;
+}
+
+function roundCurrency(value) {
+  return Math.round(value);
+}
+
+function buildMortgageFallback(result) {
+  const annualRatePercent = Number(result?.input?.mortgageAnnualRate) || 0;
+  const years = Number(result?.input?.mortgageYears) || 0;
+  const principal = Math.max(Number(result?.loanAmount) || 0, 0);
+  const months = Math.max(Math.round(years * 12), 0);
+
+  if (principal <= 0 || months <= 0) {
+    return {
+      principal: roundCurrency(principal),
+      totalInterest: 0,
+      totalPayment: roundCurrency(principal),
+      monthlyPayment: 0,
+      months
+    };
+  }
+
+  const monthlyRate = percent(annualRatePercent) / 12;
+  const rawMonthlyPayment = monthlyRate === 0
+    ? principal / months
+    : principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
+  const monthlyPayment = roundCurrency(rawMonthlyPayment);
+  const totalPayment = roundCurrency(monthlyPayment * months);
+
+  return {
+    principal: roundCurrency(principal),
+    totalInterest: roundCurrency(totalPayment - principal),
+    totalPayment,
+    monthlyPayment,
+    months
+  };
+}
 
 function getChecklistBoxes(stage) {
   return [...stage.querySelectorAll('input[type="checkbox"]')];
@@ -197,6 +237,7 @@ function render() {
   syncLoanModeUI();
   syncDeedTaxModeUI();
   const result = calculateBudget(readForm());
+  const mortgage = result.mortgage || buildMortgageFallback(result);
 
   recommendedRange.textContent = `${formatWan(result.totalLow)} ~ ${formatWan(result.totalHigh)}`;
   rangeSubtitle.textContent = result.input.loanInputMode === "amount"
@@ -210,12 +251,12 @@ function render() {
   downPayment.textContent = formatCurrency(result.downPayment);
   cashNeedLow.textContent = formatCurrency(result.totalLow);
   cashNeedHigh.textContent = formatCurrency(result.totalHigh);
-  mortgagePrincipal.textContent = formatCurrency(result.mortgage.principal);
-  mortgageInterest.textContent = formatCurrency(result.mortgage.totalInterest);
-  mortgageTotalPayment.textContent = formatCurrency(result.mortgage.totalPayment);
-  mortgageMonthlyPayment.textContent = formatCurrency(result.mortgage.monthlyPayment);
-  mortgageSummary.textContent = result.mortgage.months > 0
-    ? `以 ${result.input.mortgageAnnualRate}% 年利率、${result.input.mortgageYears} 年本息平均攤還估算，共 ${result.mortgage.months} 期。`
+  mortgagePrincipal.textContent = formatCurrency(mortgage.principal);
+  mortgageInterest.textContent = formatCurrency(mortgage.totalInterest);
+  mortgageTotalPayment.textContent = formatCurrency(mortgage.totalPayment);
+  mortgageMonthlyPayment.textContent = formatCurrency(mortgage.monthlyPayment);
+  mortgageSummary.textContent = mortgage.months > 0
+    ? `以 ${result.input.mortgageAnnualRate}% 年利率、${result.input.mortgageYears} 年本息平均攤還估算，共 ${mortgage.months} 期。`
     : "請先確認貸款年限大於 0，才會算出每月月還款。";
 
   breakdown.innerHTML = result.breakdown
