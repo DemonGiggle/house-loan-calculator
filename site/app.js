@@ -315,12 +315,33 @@ function renderMortgageChart(mortgage) {
   const xStep = points.length > 1 ? innerWidth / (points.length - 1) : 0;
   const yFor = (value) => padding.top + ((maxValue - value) / valueRange) * innerHeight;
   const xFor = (index) => padding.left + xStep * index;
+  const columnWidth = points.length > 1 ? Math.max(xStep, 18) : innerWidth;
   const polylinePoints = points.map((point, index) => `${xFor(index)},${yFor(point.averageMonthlyPayment)}`).join(" ");
   const gridValues = [maxValue, roundCurrency((maxValue + minValue) / 2), minValue];
   const defaultActiveIndex = 0;
   const activePoint = points[defaultActiveIndex];
   const activeX = xFor(defaultActiveIndex);
   const activeY = yFor(activePoint.averageMonthlyPayment);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const tooltipLayoutFor = (index) => {
+    const point = points[index];
+    const x = xFor(index);
+    const y = yFor(point.averageMonthlyPayment);
+    const tooltipWidth = 136;
+    const tooltipHeight = 34;
+    const rawX = x <= width / 2 ? x + 12 : x - tooltipWidth - 12;
+    const rawY = y - tooltipHeight - 12;
+
+    return {
+      x,
+      y,
+      tooltipWidth,
+      tooltipHeight,
+      tooltipX: clamp(rawX, padding.left, width - padding.right - tooltipWidth),
+      tooltipY: clamp(rawY, padding.top + 4, height - padding.bottom - tooltipHeight - 8)
+    };
+  };
 
   mortgageChart.innerHTML = `
     <svg viewBox="0 0 ${width} ${height}" aria-hidden="true">
@@ -332,29 +353,34 @@ function renderMortgageChart(mortgage) {
       <line class="mortgage-chart-axis" x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}"></line>
       <polyline class="mortgage-chart-line" points="${polylinePoints}"></polyline>
       ${points.map((point, index) => `
-        <circle class="mortgage-chart-point" cx="${xFor(index)}" cy="${yFor(point.averageMonthlyPayment)}" r="4"></circle>
-        <circle
+        <rect
           class="mortgage-chart-hit-area${index === defaultActiveIndex ? " is-active" : ""}"
-          cx="${xFor(index)}"
-          cy="${yFor(point.averageMonthlyPayment)}"
-          r="16"
+          x="${Math.max(padding.left, xFor(index) - (columnWidth / 2))}"
+          y="${padding.top}"
+          width="${index === 0 || index === points.length - 1 ? Math.max(columnWidth / 2, 18) : columnWidth}"
+          height="${innerHeight}"
+          rx="10"
           data-chart-point="${index}"
           tabindex="0"
           role="button"
           aria-label="第 ${point.year} 年，平均月還款 ${formatCurrency(point.averageMonthlyPayment)}"
-        ></circle>
+        ></rect>
         <text class="mortgage-chart-label" x="${xFor(index)}" y="${height - padding.bottom + 18}" text-anchor="middle">${point.year}</text>
       `).join("")}
+      <circle class="mortgage-chart-point" cx="${activeX}" cy="${activeY}" r="5.5"></circle>
+      <circle id="mortgageChartActiveHalo" class="mortgage-chart-point-halo" cx="${activeX}" cy="${activeY}" r="11"></circle>
       <line id="mortgageChartFocusLine" class="mortgage-chart-focus-line" x1="${activeX}" y1="${activeY}" x2="${activeX}" y2="${height - padding.bottom}"></line>
       <text class="mortgage-chart-label" x="${width - 4}" y="${height - 6}" text-anchor="end">年</text>
       <text class="mortgage-chart-label" x="18" y="${height / 2}" text-anchor="middle" transform="rotate(-90 18 ${height / 2})">當年平均月還款</text>
       <g id="mortgageChartTooltip">
-        <rect id="mortgageChartTooltipBg" class="mortgage-chart-tooltip-bg" x="${Math.max(activeX - 84, padding.left)}" y="${Math.max(activeY - 38, padding.top)}" width="120" height="28" rx="10"></rect>
-        <text id="mortgageChartTooltipText" class="mortgage-chart-value" x="${Math.max(activeX - 74, padding.left + 10)}" y="${Math.max(activeY - 20, padding.top + 18)}">${activePoint.year} 年：${formatCurrency(activePoint.averageMonthlyPayment)}</text>
+        <rect id="mortgageChartTooltipBg" class="mortgage-chart-tooltip-bg" x="${tooltipLayoutFor(defaultActiveIndex).tooltipX}" y="${tooltipLayoutFor(defaultActiveIndex).tooltipY}" width="${tooltipLayoutFor(defaultActiveIndex).tooltipWidth}" height="${tooltipLayoutFor(defaultActiveIndex).tooltipHeight}" rx="12"></rect>
+        <text id="mortgageChartTooltipText" class="mortgage-chart-value" x="${tooltipLayoutFor(defaultActiveIndex).tooltipX + 12}" y="${tooltipLayoutFor(defaultActiveIndex).tooltipY + 22}">${activePoint.year} 年：${formatCurrency(activePoint.averageMonthlyPayment)}</text>
       </g>
     </svg>
   `;
 
+  const activePointDot = mortgageChart.querySelector(".mortgage-chart-point");
+  const activePointHalo = mortgageChart.querySelector("#mortgageChartActiveHalo");
   const focusLine = mortgageChart.querySelector("#mortgageChartFocusLine");
   const tooltipBg = mortgageChart.querySelector("#mortgageChartTooltipBg");
   const tooltipText = mortgageChart.querySelector("#mortgageChartTooltipText");
@@ -362,11 +388,12 @@ function renderMortgageChart(mortgage) {
 
   const updateActivePoint = (index) => {
     const point = points[index];
-    const x = xFor(index);
-    const y = yFor(point.averageMonthlyPayment);
-    const tooltipX = Math.min(Math.max(x - 84, padding.left), width - padding.right - 120);
-    const tooltipY = Math.max(y - 38, padding.top);
+    const { x, y, tooltipX, tooltipY } = tooltipLayoutFor(index);
 
+    activePointDot?.setAttribute("cx", String(x));
+    activePointDot?.setAttribute("cy", String(y));
+    activePointHalo?.setAttribute("cx", String(x));
+    activePointHalo?.setAttribute("cy", String(y));
     focusLine?.setAttribute("x1", String(x));
     focusLine?.setAttribute("x2", String(x));
     focusLine?.setAttribute("y1", String(y));
@@ -385,6 +412,7 @@ function renderMortgageChart(mortgage) {
 
   hitAreas.forEach((hitArea, index) => {
     hitArea.addEventListener("click", () => updateActivePoint(index));
+    hitArea.addEventListener("pointerenter", () => updateActivePoint(index));
     hitArea.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
