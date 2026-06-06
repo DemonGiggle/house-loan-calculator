@@ -221,6 +221,29 @@ legend,
   fill: #2563eb;
 }
 
+.mortgage-chart-hit-area {
+  fill: transparent;
+  stroke: transparent;
+  cursor: pointer;
+}
+
+.mortgage-chart-hit-area.is-active {
+  fill: rgba(37, 99, 235, 0.12);
+  stroke: rgba(37, 99, 235, 0.22);
+}
+
+.mortgage-chart-hit-area:focus-visible {
+  fill: rgba(37, 99, 235, 0.12);
+  stroke: #2563eb;
+  stroke-width: 2;
+}
+
+.mortgage-chart-focus-line {
+  stroke: rgba(37, 99, 235, 0.4);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
 .mortgage-chart-label {
   fill: #475569;
   font-size: 12px;
@@ -230,6 +253,12 @@ legend,
   fill: #1d4ed8;
   font-size: 12px;
   font-weight: 700;
+}
+
+.mortgage-chart-tooltip-bg {
+  fill: rgba(255, 255, 255, 0.94);
+  stroke: #93c5fd;
+  stroke-width: 1;
 }
 
 .mode-option {

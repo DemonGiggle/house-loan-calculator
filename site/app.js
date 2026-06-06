@@ -1,4 +1,4 @@
-import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606c";
+import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606d";
 
 const form = document.querySelector("#calculator-form");
 const recommendedRange = document.querySelector("#recommendedRange");
@@ -317,6 +317,10 @@ function renderMortgageChart(mortgage) {
   const xFor = (index) => padding.left + xStep * index;
   const polylinePoints = points.map((point, index) => `${xFor(index)},${yFor(point.averageMonthlyPayment)}`).join(" ");
   const gridValues = [maxValue, roundCurrency((maxValue + minValue) / 2), minValue];
+  const defaultActiveIndex = 0;
+  const activePoint = points[defaultActiveIndex];
+  const activeX = xFor(defaultActiveIndex);
+  const activeY = yFor(activePoint.averageMonthlyPayment);
 
   mortgageChart.innerHTML = `
     <svg viewBox="0 0 ${width} ${height}" aria-hidden="true">
@@ -329,14 +333,65 @@ function renderMortgageChart(mortgage) {
       <polyline class="mortgage-chart-line" points="${polylinePoints}"></polyline>
       ${points.map((point, index) => `
         <circle class="mortgage-chart-point" cx="${xFor(index)}" cy="${yFor(point.averageMonthlyPayment)}" r="4"></circle>
-        <text class="mortgage-chart-label" x="${xFor(index)}" y="${height - padding.bottom + 18}" text-anchor="middle">${point.year}年</text>
+        <circle
+          class="mortgage-chart-hit-area${index === defaultActiveIndex ? " is-active" : ""}"
+          cx="${xFor(index)}"
+          cy="${yFor(point.averageMonthlyPayment)}"
+          r="16"
+          data-chart-point="${index}"
+          tabindex="0"
+          role="button"
+          aria-label="第 ${point.year} 年，平均月還款 ${formatCurrency(point.averageMonthlyPayment)}"
+        ></circle>
+        <text class="mortgage-chart-label" x="${xFor(index)}" y="${height - padding.bottom + 18}" text-anchor="middle">${point.year}</text>
       `).join("")}
-      <text class="mortgage-chart-label" x="${width / 2}" y="${height - 6}" text-anchor="middle">還款經過時間</text>
+      <line id="mortgageChartFocusLine" class="mortgage-chart-focus-line" x1="${activeX}" y1="${activeY}" x2="${activeX}" y2="${height - padding.bottom}"></line>
+      <text class="mortgage-chart-label" x="${width - 4}" y="${height - 6}" text-anchor="end">年</text>
       <text class="mortgage-chart-label" x="18" y="${height / 2}" text-anchor="middle" transform="rotate(-90 18 ${height / 2})">當年平均月還款</text>
-      <text class="mortgage-chart-value" x="${xFor(0)}" y="${yFor(points[0].averageMonthlyPayment) - 10}" text-anchor="start">${formatWan(points[0].averageMonthlyPayment)}</text>
-      <text class="mortgage-chart-value" x="${xFor(points.length - 1)}" y="${yFor(points[points.length - 1].averageMonthlyPayment) - 10}" text-anchor="end">${formatWan(points[points.length - 1].averageMonthlyPayment)}</text>
+      <g id="mortgageChartTooltip">
+        <rect id="mortgageChartTooltipBg" class="mortgage-chart-tooltip-bg" x="${Math.max(activeX - 84, padding.left)}" y="${Math.max(activeY - 38, padding.top)}" width="120" height="28" rx="10"></rect>
+        <text id="mortgageChartTooltipText" class="mortgage-chart-value" x="${Math.max(activeX - 74, padding.left + 10)}" y="${Math.max(activeY - 20, padding.top + 18)}">${activePoint.year} 年：${formatCurrency(activePoint.averageMonthlyPayment)}</text>
+      </g>
     </svg>
   `;
+
+  const focusLine = mortgageChart.querySelector("#mortgageChartFocusLine");
+  const tooltipBg = mortgageChart.querySelector("#mortgageChartTooltipBg");
+  const tooltipText = mortgageChart.querySelector("#mortgageChartTooltipText");
+  const hitAreas = mortgageChart.querySelectorAll("[data-chart-point]");
+
+  const updateActivePoint = (index) => {
+    const point = points[index];
+    const x = xFor(index);
+    const y = yFor(point.averageMonthlyPayment);
+    const tooltipX = Math.min(Math.max(x - 84, padding.left), width - padding.right - 120);
+    const tooltipY = Math.max(y - 38, padding.top);
+
+    focusLine?.setAttribute("x1", String(x));
+    focusLine?.setAttribute("x2", String(x));
+    focusLine?.setAttribute("y1", String(y));
+    tooltipBg?.setAttribute("x", String(tooltipX));
+    tooltipBg?.setAttribute("y", String(tooltipY));
+    tooltipText?.setAttribute("x", String(tooltipX + 10));
+    tooltipText?.setAttribute("y", String(tooltipY + 18));
+    if (tooltipText) {
+      tooltipText.textContent = `${point.year} 年：${formatCurrency(point.averageMonthlyPayment)}`;
+    }
+
+    hitAreas.forEach((hitArea, hitIndex) => {
+      hitArea.classList.toggle("is-active", hitIndex === index);
+    });
+  };
+
+  hitAreas.forEach((hitArea, index) => {
+    hitArea.addEventListener("click", () => updateActivePoint(index));
+    hitArea.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        updateActivePoint(index);
+      }
+    });
+  });
 }
 
 function render() {
