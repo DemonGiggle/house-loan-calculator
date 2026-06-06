@@ -22,7 +22,12 @@ export function calculateBudget(rawInput) {
   const loanAmount = resolveLoanAmount(input, price);
   const downPayment = Math.max(price - loanAmount, 0);
   const { assessedValue, assessedValueSource } = resolveAssessedValue(input, price);
-  const mortgage = calculateMortgageSummary(loanAmount, input.mortgageAnnualRate, input.mortgageYears);
+  const mortgage = calculateMortgageSummary(
+    loanAmount,
+    input.mortgageAnnualRate,
+    input.mortgageYears,
+    input.mortgageRepaymentType
+  );
 
   const renovationLow = input.areaPing * input.renovationLowPerPingWan * 10000;
   const renovationHigh = input.areaPing * input.renovationHighPerPingWan * 10000;
@@ -126,7 +131,7 @@ export function calculateBudget(rawInput) {
           : `你目前使用快速估算模式，因此契稅先以總價的 ${input.assessedValueRatio}% 推估為 ${formatWan(assessedValue)}，再套用 ${input.deedTaxRate}% 稅率估算。`,
       `裝潢費以 ${input.areaPing} 坪、每坪 ${input.renovationLowPerPingWan}~${input.renovationHighPerPingWan} 萬估算。`,
       mortgage.months > 0
-        ? `若以 ${input.mortgageAnnualRate}% 年利率、${input.mortgageYears} 年本息平均攤還估算，月還款約 ${formatCurrency(mortgage.monthlyPayment)}。`
+        ? buildMortgageNote(input, mortgage)
         : "若要看銀行月付試算，請先確認貸款金額與貸款年限大於 0。",
       "若你想專注看簽約前現金準備，可取消裝潢或緩衝項目。"
     ]
@@ -151,6 +156,9 @@ export function normalizeInput(rawInput) {
       : clamp(numberOrZero(rawInput.loanRatio), 0, 100),
     mortgageAnnualRate: numberOrZero(rawInput.mortgageAnnualRate),
     mortgageYears: numberOrZero(rawInput.mortgageYears),
+    mortgageRepaymentType: rawInput.mortgageRepaymentType === "equal-principal"
+      ? "equal-principal"
+      : "equal-payment",
     areaPing: numberOrZero(rawInput.areaPing),
     brokerFeeRate: numberOrZero(rawInput.brokerFeeRate),
     houseAssessedValueWan: numberOrZero(rawInput.houseAssessedValueWan),
@@ -209,7 +217,7 @@ function resolveAssessedValue(input, price) {
   };
 }
 
-function calculateMortgageSummary(principal, annualRatePercent, years) {
+function calculateMortgageSummary(principal, annualRatePercent, years, repaymentType = "equal-payment") {
   const months = Math.max(Math.round(years * 12), 0);
 
   if (principal <= 0 || months <= 0) {
@@ -219,11 +227,34 @@ function calculateMortgageSummary(principal, annualRatePercent, years) {
       totalPayment: roundCurrency(Math.max(principal, 0)),
       monthlyPayment: 0,
       months,
-      annualRatePercent
+      annualRatePercent,
+      repaymentType,
+      firstMonthlyPayment: 0,
+      lastMonthlyPayment: 0
     };
   }
 
   const monthlyRate = percent(annualRatePercent) / 12;
+  if (repaymentType === "equal-principal") {
+    const monthlyPrincipal = principal / months;
+    const firstMonthlyPayment = roundCurrency(monthlyPrincipal + principal * monthlyRate);
+    const lastMonthlyPayment = roundCurrency(monthlyPrincipal + monthlyPrincipal * monthlyRate);
+    const totalInterest = roundCurrency(monthlyRate === 0 ? 0 : principal * monthlyRate * (months + 1) / 2);
+    const totalPayment = roundCurrency(principal + totalInterest);
+
+    return {
+      principal: roundCurrency(principal),
+      totalInterest,
+      totalPayment,
+      monthlyPayment: firstMonthlyPayment,
+      firstMonthlyPayment,
+      lastMonthlyPayment,
+      months,
+      annualRatePercent,
+      repaymentType
+    };
+  }
+
   const rawMonthlyPayment = monthlyRate === 0
     ? principal / months
     : principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
@@ -236,9 +267,20 @@ function calculateMortgageSummary(principal, annualRatePercent, years) {
     totalInterest,
     totalPayment,
     monthlyPayment,
+    firstMonthlyPayment: monthlyPayment,
+    lastMonthlyPayment: monthlyPayment,
     months,
-    annualRatePercent
+    annualRatePercent,
+    repaymentType
   };
+}
+
+function buildMortgageNote(input, mortgage) {
+  if (mortgage.repaymentType === "equal-principal") {
+    return `若以 ${input.mortgageAnnualRate}% 年利率、${input.mortgageYears} 年本金平均攤還估算，共 ${mortgage.months} 期；首月月還款約 ${formatCurrency(mortgage.firstMonthlyPayment)}，最後一期約 ${formatCurrency(mortgage.lastMonthlyPayment)}。`;
+  }
+
+  return `若以 ${input.mortgageAnnualRate}% 年利率、${input.mortgageYears} 年本息平均攤還估算，月還款約 ${formatCurrency(mortgage.monthlyPayment)}。`;
 }
 
 function numberOrZero(value) {

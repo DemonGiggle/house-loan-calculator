@@ -1,4 +1,4 @@
-import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260604b";
+import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606a";
 
 const form = document.querySelector("#calculator-form");
 const recommendedRange = document.querySelector("#recommendedRange");
@@ -11,6 +11,7 @@ const mortgagePrincipal = document.querySelector("#mortgagePrincipal");
 const mortgageInterest = document.querySelector("#mortgageInterest");
 const mortgageTotalPayment = document.querySelector("#mortgageTotalPayment");
 const mortgageMonthlyPayment = document.querySelector("#mortgageMonthlyPayment");
+const mortgageMonthlyPaymentLabel = document.querySelector("#mortgageMonthlyPaymentLabel");
 const mortgageSummary = document.querySelector("#mortgageSummary");
 const breakdown = document.querySelector("#breakdown");
 const notes = document.querySelector("#notes");
@@ -33,6 +34,9 @@ function buildMortgageFallback(result) {
   const years = Number(result?.input?.mortgageYears) || 0;
   const principal = Math.max(Number(result?.loanAmount) || 0, 0);
   const months = Math.max(Math.round(years * 12), 0);
+  const repaymentType = result?.input?.mortgageRepaymentType === "equal-principal"
+    ? "equal-principal"
+    : "equal-payment";
 
   if (principal <= 0 || months <= 0) {
     return {
@@ -40,11 +44,32 @@ function buildMortgageFallback(result) {
       totalInterest: 0,
       totalPayment: roundCurrency(principal),
       monthlyPayment: 0,
-      months
+      months,
+      repaymentType,
+      firstMonthlyPayment: 0,
+      lastMonthlyPayment: 0
     };
   }
 
   const monthlyRate = percent(annualRatePercent) / 12;
+  if (repaymentType === "equal-principal") {
+    const monthlyPrincipal = principal / months;
+    const firstMonthlyPayment = roundCurrency(monthlyPrincipal + principal * monthlyRate);
+    const lastMonthlyPayment = roundCurrency(monthlyPrincipal + monthlyPrincipal * monthlyRate);
+    const totalInterest = roundCurrency(monthlyRate === 0 ? 0 : principal * monthlyRate * (months + 1) / 2);
+
+    return {
+      principal: roundCurrency(principal),
+      totalInterest,
+      totalPayment: roundCurrency(principal + totalInterest),
+      monthlyPayment: firstMonthlyPayment,
+      months,
+      repaymentType,
+      firstMonthlyPayment,
+      lastMonthlyPayment
+    };
+  }
+
   const rawMonthlyPayment = monthlyRate === 0
     ? principal / months
     : principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
@@ -56,7 +81,10 @@ function buildMortgageFallback(result) {
     totalInterest: roundCurrency(totalPayment - principal),
     totalPayment,
     monthlyPayment,
-    months
+    months,
+    repaymentType,
+    firstMonthlyPayment: monthlyPayment,
+    lastMonthlyPayment: monthlyPayment
   };
 }
 
@@ -129,8 +157,8 @@ const helpContent = {
   loanInputMode: "你可以二選一：若還在抓銀行大概能貸幾成，就用『貸款成數』；若已經知道大概會核多少金額，就直接切到『貸款金額』。",
   loanRatio: "銀行願意貸給你的比例。像 80% 代表總價 1500 萬時，預估可貸 1200 萬，剩下 300 萬就是基本頭期款。",
   loanAmountWan: "直接輸入你預計要貸的總金額。系統會自動換算成對應貸款成數，並據此估算頭期款與相關費用。",
-  mortgageCalculator: "這段是銀行房貸試算區，會直接使用上方的貸款金額，再按你填的年利率與貸款年限，估算本息平均攤還下的月還款、總利息與本息合計。",
-  mortgageAnnualRate: "填銀行給你的房貸年利率，例如 2.35%。這裡用本息平均攤還公式估算每月月付與總利息。",
+  mortgageCalculator: "這段是銀行房貸試算區，會直接使用上方的貸款金額，再按你填的年利率、貸款年限與攤還方式，估算月還款、總利息與本息合計。",
+  mortgageAnnualRate: "填銀行給你的房貸年利率，例如 2.35%。系統會依你選的本息平均攤還或本金平均攤還方式估算結果。",
   mortgageYears: "貸款期數，以年為單位。像 30 年就是 360 期；年限越長，通常月付越低，但總利息越高。",
   areaPing: "用來估算裝潢費的坪數。你可以填室內坪數，若你習慣抓權狀坪數也可以，但結果通常會偏高一些。",
   brokerFeeRate: "買方向房仲支付的服務費比例。常見上限約為成交總價 2%，這裡可依實際談到的條件自行調整。",
@@ -173,6 +201,7 @@ function readForm() {
     loanAmountWan: formData.get("loanAmountWan"),
     mortgageAnnualRate: formData.get("mortgageAnnualRate"),
     mortgageYears: formData.get("mortgageYears"),
+    mortgageRepaymentType: formData.get("mortgageRepaymentType"),
     deedTaxInputMode: currentDeedTaxInputMode(),
     areaPing: formData.get("areaPing"),
     brokerFeeRate: formData.get("brokerFeeRate"),
@@ -255,8 +284,13 @@ function render() {
   mortgageInterest.textContent = formatCurrency(mortgage.totalInterest);
   mortgageTotalPayment.textContent = formatCurrency(mortgage.totalPayment);
   mortgageMonthlyPayment.textContent = formatCurrency(mortgage.monthlyPayment);
+  mortgageMonthlyPaymentLabel.textContent = mortgage.repaymentType === "equal-principal"
+    ? "首月月還款"
+    : "月還款";
   mortgageSummary.textContent = mortgage.months > 0
-    ? `以 ${result.input.mortgageAnnualRate}% 年利率、${result.input.mortgageYears} 年本息平均攤還估算，共 ${mortgage.months} 期。`
+    ? mortgage.repaymentType === "equal-principal"
+      ? `以 ${result.input.mortgageAnnualRate}% 年利率、${result.input.mortgageYears} 年本金平均攤還估算，共 ${mortgage.months} 期；首月約 ${formatCurrency(mortgage.firstMonthlyPayment)}，最後一期約 ${formatCurrency(mortgage.lastMonthlyPayment)}。`
+      : `以 ${result.input.mortgageAnnualRate}% 年利率、${result.input.mortgageYears} 年本息平均攤還估算，共 ${mortgage.months} 期。`
     : "請先確認貸款年限大於 0，才會算出每月月還款。";
 
   breakdown.innerHTML = result.breakdown

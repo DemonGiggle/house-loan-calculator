@@ -30,7 +30,8 @@ test("normalizeInput derives loan ratio from loan amount mode", () => {
     loanInputMode: "amount",
     loanAmountWan: "1200",
     mortgageAnnualRate: "2.35",
-    mortgageYears: "30"
+    mortgageYears: "30",
+    mortgageRepaymentType: "equal-principal"
   });
 
   assert.equal(input.loanInputMode, "amount");
@@ -38,6 +39,7 @@ test("normalizeInput derives loan ratio from loan amount mode", () => {
   assert.equal(input.loanRatio, 80);
   assert.equal(input.mortgageAnnualRate, 2.35);
   assert.equal(input.mortgageYears, 30);
+  assert.equal(input.mortgageRepaymentType, "equal-principal");
 });
 
 test("calculateBudget uses direct assessed value when provided", () => {
@@ -247,4 +249,44 @@ test("calculateBudget supports zero-interest mortgage calculation", () => {
   assert.equal(result.mortgage.monthlyPayment, 12500);
   assert.equal(result.mortgage.totalInterest, 0);
   assert.equal(result.mortgage.totalPayment, 3000000);
+});
+
+test("calculateBudget supports equal-principal mortgage calculation", () => {
+  const result = calculateBudget({
+    priceWan: 1000,
+    loanRatio: 80,
+    mortgageAnnualRate: 2.35,
+    mortgageYears: 30,
+    mortgageRepaymentType: "equal-principal",
+    areaPing: 0,
+    brokerFeeRate: 0,
+    assessedValueRatio: 0,
+    renovationLowPerPingWan: 0,
+    renovationHighPerPingWan: 0,
+    scrivenerFee: 0,
+    mortgageRegistrationRate: 0,
+    deedTaxRate: 0,
+    stampTaxRate: 0,
+    bankFees: 0,
+    bufferRate: 0,
+    includeBrokerFee: false,
+    includeDeedTax: false,
+    includeStampTax: false,
+    includeScrivenerFee: false,
+    includeMortgageRegistration: false,
+    includeBankFees: false,
+    includeRenovation: false,
+    includeBuffer: false
+  });
+
+  assert.equal(result.mortgage.repaymentType, "equal-principal");
+  assert.equal(result.mortgage.months, 360);
+  assert.equal(result.mortgage.principal, 8000000);
+  assert.equal(result.mortgage.monthlyPayment, 37889);
+  assert.equal(result.mortgage.firstMonthlyPayment, 37889);
+  assert.equal(result.mortgage.lastMonthlyPayment, 22266);
+  assert.equal(result.mortgage.totalInterest, 2827833);
+  assert.equal(result.mortgage.totalPayment, 10827833);
+  assert.match(result.notes[3], /本金平均攤還/);
+  assert.match(result.notes[3], /最後一期約 \$22,266/);
 });
