@@ -262,6 +262,13 @@
               <div><dt id="mortgageMonthlyPaymentLabel">月還款</dt><dd id="mortgageMonthlyPayment">--</dd></div>
             </dl>
             <p class="sub mortgage-summary" id="mortgageSummary">--</p>
+            <section id="mortgageChartCard" class="mortgage-chart-card hidden-by-mode" aria-live="polite">
+              <div class="mortgage-chart-header">
+                <h3>年度平均月還款折線圖</h3>
+                <p class="sub">橫軸是還款經過年數，縱軸是該年度平均每月要付的金額。</p>
+              </div>
+              <div id="mortgageChart" class="mortgage-chart" role="img" aria-label="本金平均攤還年度平均月還款折線圖"></div>
+            </section>
           </article>
 
           <article class="card result-card">
@@ -772,6 +779,6 @@
       </div>
     </div>
 
-    <script type="module" src="./app.js?v=20260606b"></script>
+    <script type="module" src="./app.js?v=20260606c"></script>
   </body>
 </html>

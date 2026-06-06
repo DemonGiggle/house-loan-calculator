@@ -230,7 +230,8 @@ function calculateMortgageSummary(principal, annualRatePercent, years, repayment
       annualRatePercent,
       repaymentType,
       firstMonthlyPayment: 0,
-      lastMonthlyPayment: 0
+      lastMonthlyPayment: 0,
+      yearlyAverageMonthlyPayments: []
     };
   }
 
@@ -241,6 +242,7 @@ function calculateMortgageSummary(principal, annualRatePercent, years, repayment
     const lastMonthlyPayment = roundCurrency(monthlyPrincipal + monthlyPrincipal * monthlyRate);
     const totalInterest = roundCurrency(monthlyRate === 0 ? 0 : principal * monthlyRate * (months + 1) / 2);
     const totalPayment = roundCurrency(principal + totalInterest);
+    const yearlyAverageMonthlyPayments = buildEqualPrincipalYearlyAverages(principal, monthlyRate, months, monthlyPrincipal);
 
     return {
       principal: roundCurrency(principal),
@@ -251,7 +253,8 @@ function calculateMortgageSummary(principal, annualRatePercent, years, repayment
       lastMonthlyPayment,
       months,
       annualRatePercent,
-      repaymentType
+      repaymentType,
+      yearlyAverageMonthlyPayments
     };
   }
 
@@ -271,7 +274,8 @@ function calculateMortgageSummary(principal, annualRatePercent, years, repayment
     lastMonthlyPayment: monthlyPayment,
     months,
     annualRatePercent,
-    repaymentType
+    repaymentType,
+    yearlyAverageMonthlyPayments: []
   };
 }
 
@@ -281,6 +285,27 @@ function buildMortgageNote(input, mortgage) {
   }
 
   return `若以 ${input.mortgageAnnualRate}% 年利率、${input.mortgageYears} 年本息平均攤還估算，月還款約 ${formatCurrency(mortgage.monthlyPayment)}。`;
+}
+
+function buildEqualPrincipalYearlyAverages(principal, monthlyRate, months, monthlyPrincipal) {
+  const yearlyAverages = [];
+
+  for (let startMonth = 0; startMonth < months; startMonth += 12) {
+    const endMonth = Math.min(startMonth + 12, months);
+    let totalForYear = 0;
+
+    for (let monthIndex = startMonth; monthIndex < endMonth; monthIndex += 1) {
+      const remainingPrincipal = principal - (monthlyPrincipal * monthIndex);
+      totalForYear += monthlyPrincipal + Math.max(remainingPrincipal, 0) * monthlyRate;
+    }
+
+    yearlyAverages.push({
+      year: Math.floor(startMonth / 12) + 1,
+      averageMonthlyPayment: roundCurrency(totalForYear / (endMonth - startMonth))
+    });
+  }
+
+  return yearlyAverages;
 }
 
 function numberOrZero(value) {

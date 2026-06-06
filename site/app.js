@@ -1,4 +1,4 @@
-import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606b";
+import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606c";
 
 const form = document.querySelector("#calculator-form");
 const recommendedRange = document.querySelector("#recommendedRange");
@@ -13,6 +13,8 @@ const mortgageTotalPayment = document.querySelector("#mortgageTotalPayment");
 const mortgageMonthlyPayment = document.querySelector("#mortgageMonthlyPayment");
 const mortgageMonthlyPaymentLabel = document.querySelector("#mortgageMonthlyPaymentLabel");
 const mortgageSummary = document.querySelector("#mortgageSummary");
+const mortgageChartCard = document.querySelector("#mortgageChartCard");
+const mortgageChart = document.querySelector("#mortgageChart");
 const breakdown = document.querySelector("#breakdown");
 const notes = document.querySelector("#notes");
 const helpModal = document.querySelector("#help-modal");
@@ -48,7 +50,8 @@ function buildMortgageFallback(result) {
       months,
       repaymentType,
       firstMonthlyPayment: 0,
-      lastMonthlyPayment: 0
+      lastMonthlyPayment: 0,
+      yearlyAverageMonthlyPayments: []
     };
   }
 
@@ -67,7 +70,8 @@ function buildMortgageFallback(result) {
       months,
       repaymentType,
       firstMonthlyPayment,
-      lastMonthlyPayment
+      lastMonthlyPayment,
+      yearlyAverageMonthlyPayments: buildEqualPrincipalYearlyAverages(principal, monthlyRate, months, monthlyPrincipal)
     };
   }
 
@@ -85,8 +89,30 @@ function buildMortgageFallback(result) {
     months,
     repaymentType,
     firstMonthlyPayment: monthlyPayment,
-    lastMonthlyPayment: monthlyPayment
+    lastMonthlyPayment: monthlyPayment,
+    yearlyAverageMonthlyPayments: []
   };
+}
+
+function buildEqualPrincipalYearlyAverages(principal, monthlyRate, months, monthlyPrincipal) {
+  const yearlyAverages = [];
+
+  for (let startMonth = 0; startMonth < months; startMonth += 12) {
+    const endMonth = Math.min(startMonth + 12, months);
+    let totalForYear = 0;
+
+    for (let monthIndex = startMonth; monthIndex < endMonth; monthIndex += 1) {
+      const remainingPrincipal = principal - (monthlyPrincipal * monthIndex);
+      totalForYear += monthlyPrincipal + Math.max(remainingPrincipal, 0) * monthlyRate;
+    }
+
+    yearlyAverages.push({
+      year: Math.floor(startMonth / 12) + 1,
+      averageMonthlyPayment: roundCurrency(totalForYear / (endMonth - startMonth))
+    });
+  }
+
+  return yearlyAverages;
 }
 
 function getChecklistBoxes(stage) {
@@ -262,9 +288,55 @@ function syncDeedTaxModeUI() {
 }
 
 function syncModeOptionCards(groupName) {
-  form.querySelectorAll(`input[name="${groupName}"]`).forEach((input) => {
+  document.querySelectorAll(`input[name="${groupName}"]`).forEach((input) => {
     input.closest(".mode-option")?.classList.toggle("active", input.checked);
   });
+}
+
+function renderMortgageChart(mortgage) {
+  const points = mortgage.yearlyAverageMonthlyPayments || [];
+  const showChart = mortgage.repaymentType === "equal-principal" && points.length > 0;
+
+  mortgageChartCard.classList.toggle("hidden-by-mode", !showChart);
+  if (!showChart) {
+    mortgageChart.innerHTML = "";
+    return;
+  }
+
+  const width = 640;
+  const height = 260;
+  const padding = { top: 20, right: 24, bottom: 34, left: 56 };
+  const innerWidth = width - padding.left - padding.right;
+  const innerHeight = height - padding.top - padding.bottom;
+  const values = points.map((point) => point.averageMonthlyPayment);
+  const maxValue = Math.max(...values);
+  const minValue = Math.min(...values);
+  const valueRange = Math.max(maxValue - minValue, 1);
+  const xStep = points.length > 1 ? innerWidth / (points.length - 1) : 0;
+  const yFor = (value) => padding.top + ((maxValue - value) / valueRange) * innerHeight;
+  const xFor = (index) => padding.left + xStep * index;
+  const polylinePoints = points.map((point, index) => `${xFor(index)},${yFor(point.averageMonthlyPayment)}`).join(" ");
+  const gridValues = [maxValue, roundCurrency((maxValue + minValue) / 2), minValue];
+
+  mortgageChart.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" aria-hidden="true">
+      ${gridValues.map((value) => `
+        <line class="mortgage-chart-grid" x1="${padding.left}" y1="${yFor(value)}" x2="${width - padding.right}" y2="${yFor(value)}"></line>
+        <text class="mortgage-chart-label" x="${padding.left - 10}" y="${yFor(value) + 4}" text-anchor="end">${formatWan(value)}</text>
+      `).join("")}
+      <line class="mortgage-chart-axis" x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${height - padding.bottom}"></line>
+      <line class="mortgage-chart-axis" x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}"></line>
+      <polyline class="mortgage-chart-line" points="${polylinePoints}"></polyline>
+      ${points.map((point, index) => `
+        <circle class="mortgage-chart-point" cx="${xFor(index)}" cy="${yFor(point.averageMonthlyPayment)}" r="4"></circle>
+        <text class="mortgage-chart-label" x="${xFor(index)}" y="${height - padding.bottom + 18}" text-anchor="middle">${point.year}年</text>
+      `).join("")}
+      <text class="mortgage-chart-label" x="${width / 2}" y="${height - 6}" text-anchor="middle">還款經過時間</text>
+      <text class="mortgage-chart-label" x="18" y="${height / 2}" text-anchor="middle" transform="rotate(-90 18 ${height / 2})">當年平均月還款</text>
+      <text class="mortgage-chart-value" x="${xFor(0)}" y="${yFor(points[0].averageMonthlyPayment) - 10}" text-anchor="start">${formatWan(points[0].averageMonthlyPayment)}</text>
+      <text class="mortgage-chart-value" x="${xFor(points.length - 1)}" y="${yFor(points[points.length - 1].averageMonthlyPayment) - 10}" text-anchor="end">${formatWan(points[points.length - 1].averageMonthlyPayment)}</text>
+    </svg>
+  `;
 }
 
 function render() {
@@ -298,6 +370,7 @@ function render() {
       ? `以 ${result.input.mortgageAnnualRate}% 年利率、${result.input.mortgageYears} 年本金平均攤還估算，共 ${mortgage.months} 期；首月約 ${formatCurrency(mortgage.firstMonthlyPayment)}，最後一期約 ${formatCurrency(mortgage.lastMonthlyPayment)}。`
       : `以 ${result.input.mortgageAnnualRate}% 年利率、${result.input.mortgageYears} 年本息平均攤還估算，共 ${mortgage.months} 期。`
     : "請先確認貸款年限大於 0，才會算出每月月還款。";
+  renderMortgageChart(mortgage);
 
   breakdown.innerHTML = result.breakdown
     .map((item) => {

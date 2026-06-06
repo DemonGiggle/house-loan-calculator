@@ -287,6 +287,11 @@ test("calculateBudget supports equal-principal mortgage calculation", () => {
   assert.equal(result.mortgage.lastMonthlyPayment, 22266);
   assert.equal(result.mortgage.totalInterest, 2827833);
   assert.equal(result.mortgage.totalPayment, 10827833);
+  assert.equal(result.mortgage.yearlyAverageMonthlyPayments.length, 30);
+  assert.equal(result.mortgage.yearlyAverageMonthlyPayments[0].year, 1);
+  assert.equal(result.mortgage.yearlyAverageMonthlyPayments[0].averageMonthlyPayment, 37650);
+  assert.equal(result.mortgage.yearlyAverageMonthlyPayments.at(-1).year, 30);
+  assert.equal(result.mortgage.yearlyAverageMonthlyPayments.at(-1).averageMonthlyPayment, 22505);
   assert.match(result.notes[3], /本金平均攤還/);
   assert.match(result.notes[3], /最後一期約 \$22,266/);
 });
