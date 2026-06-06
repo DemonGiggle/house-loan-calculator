@@ -163,6 +163,10 @@ legend,
   margin-bottom: 16px;
 }
 
+.mortgage-repayment-options {
+  margin-top: 16px;
+}
+
 .mode-option {
   display: flex;
   gap: 12px;

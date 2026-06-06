@@ -1,4 +1,4 @@
-import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606a";
+import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606b";
 
 const form = document.querySelector("#calculator-form");
 const recommendedRange = document.querySelector("#recommendedRange");
@@ -20,6 +20,7 @@ const helpBody = document.querySelector("#help-body");
 const helpClose = document.querySelector("#help-close");
 const loanModeFields = document.querySelectorAll("[data-mode-field]");
 const deedTaxModeFields = document.querySelectorAll("[data-deed-tax-mode-field]");
+const mortgageRepaymentInputs = document.querySelectorAll('input[name="mortgageRepaymentType"]');
 
 function percent(value) {
   return value / 100;
@@ -190,6 +191,10 @@ function currentDeedTaxInputMode() {
   return form.querySelector('input[name="deedTaxInputMode"]:checked')?.value || "estimated";
 }
 
+function currentMortgageRepaymentType() {
+  return document.querySelector('input[name="mortgageRepaymentType"]:checked')?.value || "equal-payment";
+}
+
 function readForm() {
   const formData = new FormData(form);
   const checkbox = (name) => formData.get(name) === "on";
@@ -201,7 +206,7 @@ function readForm() {
     loanAmountWan: formData.get("loanAmountWan"),
     mortgageAnnualRate: formData.get("mortgageAnnualRate"),
     mortgageYears: formData.get("mortgageYears"),
-    mortgageRepaymentType: formData.get("mortgageRepaymentType"),
+    mortgageRepaymentType: currentMortgageRepaymentType(),
     deedTaxInputMode: currentDeedTaxInputMode(),
     areaPing: formData.get("areaPing"),
     brokerFeeRate: formData.get("brokerFeeRate"),
@@ -265,6 +270,7 @@ function syncModeOptionCards(groupName) {
 function render() {
   syncLoanModeUI();
   syncDeedTaxModeUI();
+  syncModeOptionCards("mortgageRepaymentType");
   const result = calculateBudget(readForm());
   const mortgage = result.mortgage || buildMortgageFallback(result);
 
@@ -338,6 +344,9 @@ function closeHelp() {
 
 form.addEventListener("input", render);
 form.addEventListener("change", render);
+mortgageRepaymentInputs.forEach((input) => {
+  input.addEventListener("change", render);
+});
 form.addEventListener("click", (event) => {
   const trigger = event.target.closest(".help-trigger");
   if (!trigger) {

@@ -105,22 +105,6 @@
               </label>
             </div>
 
-            <div class="loan-mode-options" role="radiogroup" aria-label="房貸攤還方式">
-              <label class="mode-option active">
-                <input type="radio" name="mortgageRepaymentType" value="equal-payment" checked>
-                <span>
-                  <strong>本息平均攤還</strong>
-                  <small>每月月付較固定，前期利息占比高</small>
-                </span>
-              </label>
-              <label class="mode-option">
-                <input type="radio" name="mortgageRepaymentType" value="equal-principal">
-                <span>
-                  <strong>本金平均攤還</strong>
-                  <small>每月本金固定，月付會逐月下降</small>
-                </span>
-              </label>
-            </div>
           </section>
 
           <div class="field-grid">
@@ -255,6 +239,22 @@
 
           <article class="card result-card">
             <h2>銀行房貸計算器</h2>
+            <div class="loan-mode-options mortgage-repayment-options" role="radiogroup" aria-label="房貸攤還方式">
+              <label class="mode-option active">
+                <input type="radio" name="mortgageRepaymentType" value="equal-payment" form="calculator-form" checked>
+                <span>
+                  <strong>本息平均攤還</strong>
+                  <small>每月月付較固定，前期利息占比高</small>
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="mortgageRepaymentType" value="equal-principal" form="calculator-form">
+                <span>
+                  <strong>本金平均攤還</strong>
+                  <small>每月本金固定，月付會逐月下降</small>
+                </span>
+              </label>
+            </div>
             <dl class="stats">
               <div><dt>本金</dt><dd id="mortgagePrincipal">--</dd></div>
               <div><dt>利息</dt><dd id="mortgageInterest">--</dd></div>
@@ -772,6 +772,6 @@
       </div>
     </div>
 
-    <script type="module" src="./app.js?v=20260604b"></script>
+    <script type="module" src="./app.js?v=20260606b"></script>
   </body>
 </html>
