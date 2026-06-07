@@ -221,14 +221,6 @@
         </form>
 
         <section class="results">
-          <article class="card result-card action-card">
-            <div class="result-actions">
-              <button id="viewReportButton" type="button" class="primary-action">開啟報告</button>
-              <button id="copyShareLinkButton" type="button" class="secondary-action">複製分享連結</button>
-            </div>
-            <p class="sub action-note">報告會用新的一頁開啟；分享連結也會帶上目前的試算條件。</p>
-          </article>
-
           <article class="card result-card accent">
             <h2>建議自備款區間</h2>
             <p class="mega" id="recommendedRange">--</p>
@@ -290,57 +282,6 @@
           </article>
         </section>
       </section>
-      </section>
-
-      <section id="reportView" class="report-view hidden-by-mode" aria-live="polite">
-        <article class="card report-shell">
-          <div class="report-header">
-            <div>
-              <p class="eyebrow">唯讀報告</p>
-              <h2>買房試算摘要</h2>
-              <p class="sub" id="reportSummary">--</p>
-            </div>
-            <div class="report-actions">
-              <button id="editReportButton" type="button" class="primary-action">修改這份試算</button>
-              <button id="copyReportLinkButton" type="button" class="secondary-action">複製連結</button>
-            </div>
-          </div>
-
-          <section class="report-grid report-grid-primary">
-            <article class="report-card highlight">
-              <h3>建議自備款區間</h3>
-              <p id="reportRecommendedRange" class="report-hero-value">--</p>
-              <p id="reportRangeSubtitle" class="sub">--</p>
-            </article>
-
-            <article class="report-card">
-              <h3>房貸與現金需求</h3>
-              <dl class="report-stats" id="reportKeyStats"></dl>
-            </article>
-          </section>
-
-          <section class="report-grid">
-            <article class="report-card">
-              <h3>試算條件</h3>
-              <dl class="report-definition-list" id="reportInputSummary"></dl>
-            </article>
-
-            <article class="report-card">
-              <h3>房貸摘要</h3>
-              <dl class="report-definition-list" id="reportMortgageSummary"></dl>
-            </article>
-          </section>
-
-          <article class="report-card">
-            <h3>費用拆解</h3>
-            <div id="reportBreakdown" class="report-breakdown"></div>
-          </article>
-
-          <article class="report-card">
-            <h3>估算前提與說明</h3>
-            <ul id="reportNotes" class="notes report-notes"></ul>
-          </article>
-        </article>
       </section>
 
       <section id="checklist-panel" class="tab-panel">
@@ -829,6 +770,14 @@
           </section>
         </div>
       </section>
+      <section class="report-cta card">
+        <div>
+          <p class="eyebrow">Ready To Share</p>
+          <h2>條件都調好了，就直接產生報告。</h2>
+          <p class="sub">這顆按鈕會帶著目前試算條件，另開一頁偏閱讀型的橘色報告版面。</p>
+        </div>
+        <button id="viewReportButton" type="button" class="primary-action report-cta-button">產生報告</button>
+      </section>
       <div id="help-modal" class="help-modal hidden" aria-hidden="true">
         <div class="help-backdrop" data-close-help="true"></div>
         <div class="help-dialog card" role="dialog" aria-modal="true" aria-labelledby="help-title">
@@ -838,6 +787,6 @@
       </div>
     </div>
 
-    <script type="module" src="./app.js?v=20260607b"></script>
+    <script type="module" src="./app.js?v=20260608a"></script>
   </body>
 </html>

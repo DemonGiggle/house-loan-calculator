@@ -46,6 +46,11 @@ const ENUM_OPTIONS = {
   deedTaxInputMode: new Set(["estimated", "direct"])
 };
 
+const VIEW_PATHS = {
+  edit: "index.html",
+  report: "report.html"
+};
+
 export function buildShareQuery(state, view = "edit") {
   const params = new URLSearchParams();
 
@@ -68,7 +73,8 @@ export function buildShareQuery(state, view = "edit") {
 
 export function buildShareUrl(state, view = "edit", locationLike = window.location) {
   const query = buildShareQuery(state, view);
-  return `${locationLike.pathname}?${query}`;
+  const pathname = resolvePathnameForView(locationLike.pathname, view);
+  return `${pathname}?${query}`;
 }
 
 export function parseShareStateFromSearch(search) {
@@ -100,4 +106,18 @@ export function parseShareStateFromSearch(search) {
 export function parseViewFromSearch(search) {
   const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
   return params.get("view") === "report" ? "report" : "edit";
+}
+
+function resolvePathnameForView(pathname = "", view = "edit") {
+  const filename = VIEW_PATHS[view] || VIEW_PATHS.edit;
+
+  if (!pathname) {
+    return `/${filename}`;
+  }
+
+  if (pathname.endsWith("/")) {
+    return `${pathname}${filename}`;
+  }
+
+  return pathname.replace(/[^/]*$/, filename);
 }

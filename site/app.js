@@ -1,14 +1,8 @@
 import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606d";
-import { buildShareUrl, parseShareStateFromSearch, parseViewFromSearch } from "./url-state.js?v=20260607a";
+import { buildShareUrl, parseShareStateFromSearch } from "./url-state.js?v=20260608a";
 
 const form = document.querySelector("#calculator-form");
-const tabNav = document.querySelector("#tabNav");
-const calculatorPanel = document.querySelector("#calculator-panel");
-const reportView = document.querySelector("#reportView");
 const viewReportButton = document.querySelector("#viewReportButton");
-const copyShareLinkButton = document.querySelector("#copyShareLinkButton");
-const editReportButton = document.querySelector("#editReportButton");
-const copyReportLinkButton = document.querySelector("#copyReportLinkButton");
 const recommendedRange = document.querySelector("#recommendedRange");
 const rangeSubtitle = document.querySelector("#rangeSubtitle");
 const loanAmount = document.querySelector("#loanAmount");
@@ -25,14 +19,6 @@ const mortgageChartCard = document.querySelector("#mortgageChartCard");
 const mortgageChart = document.querySelector("#mortgageChart");
 const breakdown = document.querySelector("#breakdown");
 const notes = document.querySelector("#notes");
-const reportSummary = document.querySelector("#reportSummary");
-const reportRecommendedRange = document.querySelector("#reportRecommendedRange");
-const reportRangeSubtitle = document.querySelector("#reportRangeSubtitle");
-const reportKeyStats = document.querySelector("#reportKeyStats");
-const reportInputSummary = document.querySelector("#reportInputSummary");
-const reportMortgageSummary = document.querySelector("#reportMortgageSummary");
-const reportBreakdown = document.querySelector("#reportBreakdown");
-const reportNotes = document.querySelector("#reportNotes");
 const helpModal = document.querySelector("#help-modal");
 const helpBody = document.querySelector("#help-body");
 const helpClose = document.querySelector("#help-close");
@@ -177,7 +163,6 @@ function initChecklistStages() {
 
 const tabButtons = document.querySelectorAll("[data-tab-target]");
 const tabPanels = document.querySelectorAll(".tab-panel");
-let currentViewMode = "edit";
 
 function switchTab(targetId) {
   tabButtons.forEach((button) => {
@@ -314,124 +299,13 @@ function hydrateFormFromQuery() {
 }
 
 function syncUrlState(state) {
-  const nextUrl = buildShareUrl(state, currentViewMode);
+  const nextUrl = buildShareUrl(state, "edit");
   window.history.replaceState({}, "", nextUrl);
-}
-
-function setClipboardButtonState(button, text) {
-  if (!button) {
-    return;
-  }
-
-  const original = button.dataset.originalLabel || button.textContent;
-  button.dataset.originalLabel = original;
-  button.textContent = text;
-
-  window.setTimeout(() => {
-    button.textContent = button.dataset.originalLabel || original;
-  }, 1600);
-}
-
-async function copyLinkForView(view, button) {
-  const url = buildShareUrl(readForm(), view);
-  try {
-    await navigator.clipboard.writeText(new URL(url, window.location.href).href);
-    setClipboardButtonState(button, "已複製");
-  } catch {
-    setClipboardButtonState(button, "複製失敗");
-  }
 }
 
 function openReportPage() {
   const url = new URL(buildShareUrl(readForm(), "report"), window.location.href);
   window.open(url.href, "_blank", "noopener,noreferrer");
-}
-
-function navigateToView(view) {
-  currentViewMode = view;
-  window.history.pushState({}, "", buildShareUrl(readForm(), view));
-  syncViewMode();
-  render();
-}
-
-function detailRow(label, value) {
-  return `
-    <div>
-      <dt>${label}</dt>
-      <dd>${value}</dd>
-    </div>
-  `;
-}
-
-function renderReport(result, mortgage) {
-  reportSummary.textContent = "這份報告會隨 URL 參數還原同一組試算條件，適合分享給家人、房仲或一起討論的人。";
-  reportRecommendedRange.textContent = `${formatWan(result.totalLow)} ~ ${formatWan(result.totalHigh)}`;
-  reportRangeSubtitle.textContent = rangeSubtitle.textContent;
-
-  reportKeyStats.innerHTML = [
-    detailRow("預估貸款金額", formatCurrency(result.loanAmount)),
-    detailRow("基本頭期款", formatCurrency(result.downPayment)),
-    detailRow("總現金需求（低）", formatCurrency(result.totalLow)),
-    detailRow("總現金需求（高）", formatCurrency(result.totalHigh))
-  ].join("");
-
-  const inputSummaryRows = [
-    detailRow("房屋總價", `${result.input.priceWan} 萬`),
-    detailRow("貸款輸入方式", result.input.loanInputMode === "amount" ? "用貸款金額輸入" : "用貸款成數輸入"),
-    detailRow("貸款成數", `${result.input.loanRatio.toFixed(1)}%`),
-    detailRow("貸款金額", formatWan(result.loanAmount)),
-    detailRow("契稅輸入方式", result.input.deedTaxInputMode === "direct" ? "直接輸入房屋評定現值" : "快速估算"),
-    detailRow("坪數", `${result.input.areaPing} 坪`),
-    detailRow("房仲費", `${result.input.brokerFeeRate}%`)
-  ];
-
-  if (result.input.deedTaxInputMode === "direct") {
-    inputSummaryRows.push(detailRow("房屋評定現值", result.input.houseAssessedValueWan ? `${result.input.houseAssessedValueWan} 萬` : "未填"));
-  } else {
-    inputSummaryRows.push(detailRow("契稅估算比例", `${result.input.assessedValueRatio}%`));
-  }
-
-  reportInputSummary.innerHTML = inputSummaryRows.join("");
-
-  reportMortgageSummary.innerHTML = [
-    detailRow("攤還方式", mortgage.repaymentType === "equal-principal" ? "本金平均攤還" : "本息平均攤還"),
-    detailRow("房貸年利率", `${result.input.mortgageAnnualRate}%`),
-    detailRow("貸款年限", `${result.input.mortgageYears} 年`),
-    detailRow(mortgage.repaymentType === "equal-principal" ? "首月月還款" : "月還款", formatCurrency(mortgage.monthlyPayment)),
-    detailRow("總利息", formatCurrency(mortgage.totalInterest)),
-    detailRow("本息合計", formatCurrency(mortgage.totalPayment))
-  ].join("");
-
-  reportBreakdown.innerHTML = result.breakdown.map((item) => {
-    const value = item.low === item.high
-      ? formatWan(item.low)
-      : `${formatWan(item.low)} ~ ${formatWan(item.high)}`;
-    return `
-      <div class="report-breakdown-row${item.included ? "" : " is-muted"}">
-        <div>
-          <strong>${item.label}</strong>
-          <div class="sub">${item.included ? "已納入試算" : "未納入試算"}</div>
-          ${item.detail ? `<div class="sub">${item.detail}</div>` : ""}
-        </div>
-        <div class="report-breakdown-value">${value}</div>
-      </div>
-    `;
-  }).join("");
-
-  reportNotes.innerHTML = result.notes.map((note) => `<li>${note}</li>`).join("");
-}
-
-function syncViewMode() {
-  document.body.classList.toggle("report-mode", currentViewMode === "report");
-  reportView.classList.toggle("hidden-by-mode", currentViewMode !== "report");
-  calculatorPanel.classList.toggle("hidden-by-mode", currentViewMode === "report");
-  tabNav.classList.toggle("hidden-by-mode", currentViewMode === "report");
-  document.title = currentViewMode === "report"
-    ? "買房試算報告｜買房筆記"
-    : "買房筆記";
-  helpModal.classList.add("hidden");
-  helpModal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
 }
 
 function syncLoanModeUI() {
@@ -655,7 +529,6 @@ function render() {
     .join("");
 
   notes.innerHTML = result.notes.map((note) => `<li>${note}</li>`).join("");
-  renderReport(result, mortgage);
   syncUrlState(readForm());
 }
 
@@ -701,9 +574,6 @@ helpModal.addEventListener("click", (event) => {
 helpClose.addEventListener("click", closeHelp);
 
 viewReportButton?.addEventListener("click", openReportPage);
-editReportButton?.addEventListener("click", () => navigateToView("edit"));
-copyShareLinkButton?.addEventListener("click", () => copyLinkForView("report", copyShareLinkButton));
-copyReportLinkButton?.addEventListener("click", () => copyLinkForView("report", copyReportLinkButton));
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !helpModal.classList.contains("hidden")) {
@@ -712,14 +582,10 @@ document.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("popstate", () => {
-  currentViewMode = parseViewFromSearch(window.location.search);
   hydrateFormFromQuery();
-  syncViewMode();
   render();
 });
 
 hydrateFormFromQuery();
-currentViewMode = parseViewFromSearch(window.location.search);
-syncViewMode();
 initChecklistStages();
 render();

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>買房試算報告｜買房筆記</title>
+    <meta
+      name="description"
+      content="買房試算報告：用清楚易讀的摘要方式，整理自備款、房貸、費用拆解與估算前提。"
+    >
+    <link rel="stylesheet" href="./report.css">
+  </head>
+  <body>
+    <main class="report-page">
+      <section class="report-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">House Buying Report</p>
+          <h1>買房試算報告</h1>
+          <p class="hero-summary" id="reportSummary">--</p>
+        </div>
+        <div class="hero-actions">
+          <button id="editReportButton" type="button" class="ghost-action">修改這份試算</button>
+          <button id="copyReportLinkButton" type="button" class="primary-action">複製報告連結</button>
+        </div>
+      </section>
+
+      <section class="hero-highlight">
+        <article class="highlight-card">
+          <p class="section-kicker">建議自備款區間</p>
+          <p id="reportRecommendedRange" class="hero-value">--</p>
+          <p id="reportRangeSubtitle" class="hero-note">--</p>
+        </article>
+        <article class="snapshot-card">
+          <p class="section-kicker">四個先看數字</p>
+          <dl id="reportKeyStats" class="snapshot-grid"></dl>
+        </article>
+      </section>
+
+      <section class="report-layout">
+        <article class="report-card mortgage-card">
+          <div class="card-header">
+            <div>
+              <p class="section-kicker">房貸觀察</p>
+              <h2>付款方式與月付變化</h2>
+            </div>
+          </div>
+
+          <div class="repayment-switch" role="radiogroup" aria-label="房貸攤還方式">
+            <label class="switch-option active">
+              <input type="radio" name="mortgageRepaymentType" value="equal-payment" checked>
+              <span>
+                <strong>本息平均攤還</strong>
+                <small>月付固定，閱讀最直覺</small>
+              </span>
+            </label>
+            <label class="switch-option">
+              <input type="radio" name="mortgageRepaymentType" value="equal-principal">
+              <span>
+                <strong>本金平均攤還</strong>
+                <small>前高後低，越繳越輕</small>
+              </span>
+            </label>
+          </div>
+
+          <dl id="reportMortgageSummary" class="definition-grid"></dl>
+
+          <section id="mortgageChartCard" class="chart-shell hidden-by-mode" aria-live="polite">
+            <div class="chart-header">
+              <h3>年度平均月還款折線圖</h3>
+              <p>橫軸是還款經過年數，縱軸是該年度平均每月要付的金額。</p>
+            </div>
+            <div id="mortgageChart" class="mortgage-chart" role="img" aria-label="本金平均攤還年度平均月還款折線圖"></div>
+          </section>
+        </article>
+
+        <article class="report-card">
+          <div class="card-header">
+            <div>
+              <p class="section-kicker">試算基礎</p>
+              <h2>這份報告怎麼算</h2>
+            </div>
+          </div>
+          <dl id="reportInputSummary" class="definition-grid"></dl>
+        </article>
+      </section>
+
+      <section class="report-layout bottom-layout">
+        <article class="report-card">
+          <div class="card-header">
+            <div>
+              <p class="section-kicker">費用拆解</p>
+              <h2>現金需求由哪些項目組成</h2>
+            </div>
+          </div>
+          <div id="reportBreakdown" class="breakdown-list"></div>
+        </article>
+
+        <article class="report-card">
+          <div class="card-header">
+            <div>
+              <p class="section-kicker">估算說明</p>
+              <h2>閱讀時要記得的前提</h2>
+            </div>
+          </div>
+          <ul id="reportNotes" class="report-notes"></ul>
+        </article>
+      </section>
+    </main>
+
+    <script type="module" src="./report.js?v=20260608a"></script>
+  </body>
+</html>

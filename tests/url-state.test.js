@@ -36,6 +36,18 @@ test("buildShareUrl uses provided pathname and query", () => {
   assert.doesNotMatch(url, /view=report/);
 });
 
+test("buildShareUrl switches to report.html for report view", () => {
+  const url = buildShareUrl(
+    { ...DEFAULT_SHARE_STATE, mortgageRepaymentType: "equal-principal" },
+    "report",
+    { pathname: "/site/index.html" }
+  );
+
+  assert.match(url, /^\/site\/report\.html\?/);
+  assert.match(url, /view=report/);
+  assert.match(url, /mortgageRepaymentType=equal-principal/);
+});
+
 test("parseShareStateFromSearch restores booleans and valid enum values", () => {
   const state = parseShareStateFromSearch(
     "?loanInputMode=amount&mortgageRepaymentType=equal-principal&deedTaxInputMode=direct&includeBrokerFee=0&includeBuffer=true&priceWan=2000"

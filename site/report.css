@@ -1,0 +1,472 @@
+:root {
+  color-scheme: light;
+  --bg: #fff7f0;
+  --bg-accent: #ffe2c6;
+  --surface: rgba(255, 250, 244, 0.92);
+  --surface-strong: #fffdf8;
+  --border: rgba(177, 98, 29, 0.16);
+  --border-strong: rgba(177, 98, 29, 0.28);
+  --text: #3d2412;
+  --muted: #7b5b46;
+  --primary: #d46a1f;
+  --primary-deep: #9f4612;
+  --primary-soft: #fff0df;
+  --shadow: 0 24px 60px rgba(126, 62, 20, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(255, 208, 156, 0.92), transparent 30%),
+    linear-gradient(180deg, #fffaf4 0%, var(--bg) 45%, #fff1e3 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.report-page {
+  width: min(1160px, calc(100% - 32px));
+  margin: 32px auto 56px;
+}
+
+.report-hero,
+.hero-highlight,
+.report-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+}
+
+.report-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 30px;
+  border-radius: 30px;
+}
+
+.eyebrow,
+.section-kicker {
+  margin: 0 0 10px;
+  color: var(--primary);
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1.02;
+}
+
+.hero-summary,
+.hero-note,
+.chart-header p,
+.report-notes,
+.switch-option small,
+.breakdown-meta,
+.definition-grid dt,
+.snapshot-grid dt {
+  color: var(--muted);
+}
+
+.hero-summary {
+  max-width: 54rem;
+  margin: 14px 0 0;
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.primary-action,
+.ghost-action {
+  appearance: none;
+  border-radius: 999px;
+  padding: 13px 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.primary-action {
+  border: 1px solid var(--primary);
+  background: linear-gradient(135deg, var(--primary) 0%, #ea8b3c 100%);
+  color: #fffaf4;
+  box-shadow: 0 14px 28px rgba(212, 106, 31, 0.28);
+}
+
+.ghost-action {
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text);
+}
+
+.primary-action:hover,
+.ghost-action:hover {
+  transform: translateY(-1px);
+}
+
+.primary-action:focus-visible,
+.ghost-action:focus-visible,
+.switch-option:has(input:focus-visible) {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.hero-highlight {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 0;
+  margin-top: 24px;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.highlight-card,
+.snapshot-card {
+  padding: 28px 30px;
+}
+
+.highlight-card {
+  background: linear-gradient(135deg, rgba(255, 229, 201, 0.96) 0%, rgba(255, 247, 236, 0.98) 100%);
+}
+
+.snapshot-card {
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.96) 0%, rgba(255, 244, 232, 0.96) 100%);
+  border-left: 1px solid var(--border);
+}
+
+.hero-value {
+  margin: 16px 0 12px;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1.04;
+  color: var(--primary-deep);
+}
+
+.hero-note {
+  margin: 0;
+  line-height: 1.8;
+}
+
+.snapshot-grid,
+.definition-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 18px;
+  margin: 0;
+}
+
+.snapshot-grid div,
+.definition-grid div {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(177, 98, 29, 0.1);
+}
+
+.snapshot-grid dt,
+.definition-grid dt {
+  font-size: 0.9rem;
+}
+
+.snapshot-grid dd,
+.definition-grid dd {
+  margin: 8px 0 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
+.report-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 22px;
+  margin-top: 24px;
+}
+
+.bottom-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
+}
+
+.report-card {
+  padding: 26px;
+  border-radius: 28px;
+}
+
+.card-header {
+  margin-bottom: 18px;
+}
+
+.card-header h2 {
+  margin-top: 6px;
+  font-size: 1.55rem;
+}
+
+.repayment-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.switch-option {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.76);
+  cursor: pointer;
+}
+
+.switch-option.active {
+  border-color: var(--primary);
+  background: linear-gradient(180deg, #fff6eb 0%, #ffecd5 100%);
+  box-shadow: inset 0 0 0 1px rgba(212, 106, 31, 0.08);
+}
+
+.switch-option input {
+  margin-top: 4px;
+  accent-color: var(--primary);
+}
+
+.switch-option span {
+  display: grid;
+  gap: 4px;
+}
+
+.switch-option.active strong {
+  color: var(--primary-deep);
+}
+
+.chart-shell {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #fff8ef 0%, #fff2e4 100%);
+  border: 1px solid rgba(212, 106, 31, 0.18);
+}
+
+.chart-header h3 {
+  margin-bottom: 8px;
+}
+
+.chart-header p {
+  margin: 0 0 12px;
+  line-height: 1.7;
+}
+
+.mortgage-chart {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.mortgage-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mortgage-chart-axis,
+.mortgage-chart-grid {
+  stroke-linecap: round;
+}
+
+.mortgage-chart-axis {
+  stroke: rgba(122, 91, 70, 0.7);
+  stroke-width: 1.5;
+}
+
+.mortgage-chart-grid {
+  stroke: rgba(212, 106, 31, 0.14);
+  stroke-width: 1;
+}
+
+.mortgage-chart-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mortgage-chart-point {
+  fill: var(--primary);
+  stroke: #fff8ef;
+  stroke-width: 2.5;
+}
+
+.mortgage-chart-point-halo {
+  fill: rgba(212, 106, 31, 0.12);
+  stroke: rgba(212, 106, 31, 0.24);
+  stroke-width: 1.5;
+}
+
+.mortgage-chart-hit-area {
+  fill: transparent;
+  stroke: transparent;
+  cursor: pointer;
+  transition: fill 160ms ease, stroke 160ms ease;
+}
+
+.mortgage-chart-hit-area.is-active {
+  fill: rgba(212, 106, 31, 0.08);
+  stroke: rgba(212, 106, 31, 0.14);
+}
+
+.mortgage-chart-hit-area:focus-visible {
+  fill: rgba(212, 106, 31, 0.1);
+  stroke: var(--primary);
+  stroke-width: 2;
+}
+
+.mortgage-chart-focus-line {
+  stroke: rgba(212, 106, 31, 0.38);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.mortgage-chart-label {
+  fill: var(--muted);
+  font-size: 12px;
+}
+
+.mortgage-chart-value {
+  fill: #fff7f0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mortgage-chart-tooltip-bg {
+  fill: rgba(78, 44, 21, 0.95);
+  stroke: rgba(255, 214, 174, 0.4);
+  stroke-width: 1;
+  filter: drop-shadow(0 10px 18px rgba(95, 47, 16, 0.2));
+}
+
+.breakdown-list {
+  display: grid;
+  gap: 12px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(177, 98, 29, 0.1);
+}
+
+.breakdown-row.is-muted {
+  opacity: 0.58;
+}
+
+.breakdown-row strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.breakdown-meta {
+  line-height: 1.65;
+  font-size: 0.92rem;
+}
+
+.breakdown-value {
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--primary-deep);
+}
+
+.report-notes {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.85;
+}
+
+.hidden-by-mode {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .report-hero,
+  .hero-highlight,
+  .report-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .snapshot-card {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .hero-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .report-page {
+    width: min(100% - 20px, 1160px);
+    margin: 18px auto 40px;
+  }
+
+  .report-hero,
+  .highlight-card,
+  .snapshot-card,
+  .report-card {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .hero-highlight {
+    border-radius: 24px;
+  }
+
+  .snapshot-grid,
+  .definition-grid,
+  .repayment-switch {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .primary-action,
+  .ghost-action {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .breakdown-row {
+    flex-direction: column;
+  }
+}
