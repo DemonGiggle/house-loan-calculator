@@ -342,6 +342,11 @@ async function copyLinkForView(view, button) {
   }
 }
 
+function openReportPage() {
+  const url = new URL(buildShareUrl(readForm(), "report"), window.location.href);
+  window.open(url.href, "_blank", "noopener,noreferrer");
+}
+
 function navigateToView(view) {
   currentViewMode = view;
   window.history.pushState({}, "", buildShareUrl(readForm(), view));
@@ -421,6 +426,9 @@ function syncViewMode() {
   reportView.classList.toggle("hidden-by-mode", currentViewMode !== "report");
   calculatorPanel.classList.toggle("hidden-by-mode", currentViewMode === "report");
   tabNav.classList.toggle("hidden-by-mode", currentViewMode === "report");
+  document.title = currentViewMode === "report"
+    ? "買房試算報告｜買房筆記"
+    : "買房筆記";
   helpModal.classList.add("hidden");
   helpModal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
@@ -692,7 +700,7 @@ helpModal.addEventListener("click", (event) => {
 
 helpClose.addEventListener("click", closeHelp);
 
-viewReportButton?.addEventListener("click", () => navigateToView("report"));
+viewReportButton?.addEventListener("click", openReportPage);
 editReportButton?.addEventListener("click", () => navigateToView("edit"));
 copyShareLinkButton?.addEventListener("click", () => copyLinkForView("report", copyShareLinkButton));
 copyReportLinkButton?.addEventListener("click", () => copyLinkForView("report", copyReportLinkButton));
