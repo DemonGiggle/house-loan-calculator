@@ -25,6 +25,11 @@ const helpClose = document.querySelector("#help-close");
 const loanModeFields = document.querySelectorAll("[data-mode-field]");
 const deedTaxModeFields = document.querySelectorAll("[data-deed-tax-mode-field]");
 const mortgageRepaymentInputs = document.querySelectorAll('input[name="mortgageRepaymentType"]');
+const SHARE_STATE_TO_FORM_FIELD = {
+  priceWan: "price",
+  renovationLowPerPingWan: "renovationLowPerPing",
+  renovationHighPerPingWan: "renovationHighPerPing"
+};
 
 function percent(value) {
   return value / 100;
@@ -277,7 +282,8 @@ function hydrateFormFromQuery() {
   const state = parseShareStateFromSearch(window.location.search);
 
   Object.entries(state).forEach(([key, value]) => {
-    const field = form.elements.namedItem(key);
+    const fieldName = SHARE_STATE_TO_FORM_FIELD[key] || key;
+    const field = form.elements.namedItem(fieldName);
     if (!field) {
       return;
     }
