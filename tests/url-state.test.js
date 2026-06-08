@@ -5,6 +5,7 @@ import {
   DEFAULT_SHARE_STATE,
   buildShareQuery,
   buildShareUrl,
+  mapShareStateKeyToFormField,
   parseShareStateFromSearch,
   parseViewFromSearch
 } from "../site/url-state.js";
@@ -75,4 +76,11 @@ test("parseViewFromSearch only enables report mode for explicit report view", ()
   assert.equal(parseViewFromSearch("?view=report"), "report");
   assert.equal(parseViewFromSearch("?view=edit"), "edit");
   assert.equal(parseViewFromSearch("?priceWan=1000"), "edit");
+});
+
+test("mapShareStateKeyToFormField resolves aliased form field names", () => {
+  assert.equal(mapShareStateKeyToFormField("priceWan"), "price");
+  assert.equal(mapShareStateKeyToFormField("renovationLowPerPingWan"), "renovationLowPerPing");
+  assert.equal(mapShareStateKeyToFormField("renovationHighPerPingWan"), "renovationHighPerPing");
+  assert.equal(mapShareStateKeyToFormField("loanRatio"), "loanRatio");
 });

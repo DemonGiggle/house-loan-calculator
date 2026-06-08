@@ -51,6 +51,12 @@ const VIEW_PATHS = {
   report: "report.html"
 };
 
+const SHARE_STATE_TO_FORM_FIELD = {
+  priceWan: "price",
+  renovationLowPerPingWan: "renovationLowPerPing",
+  renovationHighPerPingWan: "renovationHighPerPing"
+};
+
 export function buildShareQuery(state, view = "edit") {
   const params = new URLSearchParams();
 
@@ -106,6 +112,10 @@ export function parseShareStateFromSearch(search) {
 export function parseViewFromSearch(search) {
   const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
   return params.get("view") === "report" ? "report" : "edit";
+}
+
+export function mapShareStateKeyToFormField(key) {
+  return SHARE_STATE_TO_FORM_FIELD[key] || key;
 }
 
 function resolvePathnameForView(pathname = "", view = "edit") {

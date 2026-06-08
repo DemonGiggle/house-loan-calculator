@@ -1,5 +1,5 @@
 import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606d";
-import { buildShareUrl, parseShareStateFromSearch } from "./url-state.js?v=20260608a";
+import { buildShareUrl, mapShareStateKeyToFormField, parseShareStateFromSearch } from "./url-state.js?v=20260608b";
 
 const form = document.querySelector("#calculator-form");
 const viewReportButton = document.querySelector("#viewReportButton");
@@ -25,11 +25,6 @@ const helpClose = document.querySelector("#help-close");
 const loanModeFields = document.querySelectorAll("[data-mode-field]");
 const deedTaxModeFields = document.querySelectorAll("[data-deed-tax-mode-field]");
 const mortgageRepaymentInputs = document.querySelectorAll('input[name="mortgageRepaymentType"]');
-const SHARE_STATE_TO_FORM_FIELD = {
-  priceWan: "price",
-  renovationLowPerPingWan: "renovationLowPerPing",
-  renovationHighPerPingWan: "renovationHighPerPing"
-};
 
 function percent(value) {
   return value / 100;
@@ -282,7 +277,7 @@ function hydrateFormFromQuery() {
   const state = parseShareStateFromSearch(window.location.search);
 
   Object.entries(state).forEach(([key, value]) => {
-    const fieldName = SHARE_STATE_TO_FORM_FIELD[key] || key;
+    const fieldName = mapShareStateKeyToFormField(key);
     const field = form.elements.namedItem(fieldName);
     if (!field) {
       return;
