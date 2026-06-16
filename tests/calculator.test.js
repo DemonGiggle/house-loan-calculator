@@ -3,6 +3,23 @@ import assert from "node:assert/strict";
 
 import { calculateBudget, normalizeInput } from "../site/calculator.js";
 
+function feeInput(overrides = {}) {
+  return {
+    contractFee: 1000,
+    transferScrivenerFee: 14000,
+    realPriceRegistrationFee: 2000,
+    mortgageScrivenerFee: 5000,
+    performanceBondRate: 0.03,
+    mortgageRegistrationRate: 0.12,
+    deedTaxRate: 6,
+    stampTaxAmount: 1000,
+    bankFees: 12000,
+    fireInsuranceFees: 2000,
+    bufferRate: 2,
+    ...overrides
+  };
+}
+
 test("normalizeInput clamps loan ratio, keeps assessed value, and renovation range", () => {
   const input = normalizeInput({
     priceWan: "1500",
@@ -54,18 +71,15 @@ test("calculateBudget uses direct assessed value when provided", () => {
     assessedValueRatio: 50,
     renovationLowPerPingWan: 2,
     renovationHighPerPingWan: 4,
-    scrivenerFee: 30000,
-    mortgageRegistrationRate: 0.12,
-    deedTaxRate: 6,
-    stampTaxRate: 0.1,
-    bankFees: 12000,
-    bufferRate: 2,
+    ...feeInput(),
     includeBrokerFee: true,
     includeDeedTax: true,
     includeStampTax: true,
     includeScrivenerFee: true,
+    includePerformanceBond: true,
     includeMortgageRegistration: true,
     includeBankFees: true,
+    includeFireInsurance: true,
     includeRenovation: true,
     includeBuffer: true
   });
@@ -74,10 +88,12 @@ test("calculateBudget uses direct assessed value when provided", () => {
   assert.equal(result.downPayment, 2000000);
   assert.equal(result.assessedValue, 1200000);
   assert.equal(result.assessedValueSource, "direct");
-  assert.equal(result.totalLow, 2833600);
-  assert.equal(result.totalHigh, 3233600);
+  assert.equal(result.totalLow, 2821600);
+  assert.equal(result.totalHigh, 3221600);
   assert.match(result.notes[1], /房屋評定現值 120 萬/);
   assert.match(result.breakdown.find((item) => item.key === "deedTax").detail, /房屋評定現值 120 萬/);
+  assert.match(result.breakdown.find((item) => item.key === "scrivenerFee").detail, /過戶代書/);
+  assert.equal(result.breakdown.find((item) => item.key === "performanceBond").low, 3000);
 });
 
 test("calculateBudget falls back to estimated assessed value when direct value is missing", () => {
@@ -91,28 +107,26 @@ test("calculateBudget falls back to estimated assessed value when direct value i
     assessedValueRatio: 50,
     renovationLowPerPingWan: 2,
     renovationHighPerPingWan: 4,
-    scrivenerFee: 30000,
-    mortgageRegistrationRate: 0.12,
-    deedTaxRate: 6,
-    stampTaxRate: 0.1,
-    bankFees: 12000,
-    bufferRate: 2,
+    ...feeInput(),
     includeBrokerFee: true,
     includeDeedTax: true,
     includeStampTax: true,
     includeScrivenerFee: true,
+    includePerformanceBond: true,
     includeMortgageRegistration: true,
     includeBankFees: true,
+    includeFireInsurance: true,
     includeRenovation: true,
     includeBuffer: true
   });
 
   assert.equal(result.assessedValue, 5000000);
   assert.equal(result.assessedValueSource, "estimated");
-  assert.equal(result.totalLow, 3061600);
-  assert.equal(result.totalHigh, 3461600);
+  assert.equal(result.totalLow, 3049600);
+  assert.equal(result.totalHigh, 3449600);
   assert.match(result.notes[1], /總價的 50%/);
   assert.match(result.breakdown.find((item) => item.key === "deedTax").detail, /總價 × 50%/);
+  assert.match(result.notes[3], /印花稅改為手動輸入/);
 });
 
 test("calculateBudget shows missing direct assessed value state", () => {
@@ -127,18 +141,15 @@ test("calculateBudget shows missing direct assessed value state", () => {
     assessedValueRatio: 50,
     renovationLowPerPingWan: 2,
     renovationHighPerPingWan: 4,
-    scrivenerFee: 30000,
-    mortgageRegistrationRate: 0.12,
-    deedTaxRate: 6,
-    stampTaxRate: 0.1,
-    bankFees: 12000,
-    bufferRate: 2,
+    ...feeInput(),
     includeBrokerFee: false,
     includeDeedTax: true,
     includeStampTax: false,
     includeScrivenerFee: false,
+    includePerformanceBond: false,
     includeMortgageRegistration: false,
     includeBankFees: false,
+    includeFireInsurance: false,
     includeRenovation: false,
     includeBuffer: false
   });
@@ -161,18 +172,15 @@ test("calculateBudget supports loan amount mode", () => {
     assessedValueRatio: 50,
     renovationLowPerPingWan: 2,
     renovationHighPerPingWan: 4,
-    scrivenerFee: 30000,
-    mortgageRegistrationRate: 0.12,
-    deedTaxRate: 6,
-    stampTaxRate: 0.1,
-    bankFees: 12000,
-    bufferRate: 2,
+    ...feeInput(),
     includeBrokerFee: false,
     includeDeedTax: false,
     includeStampTax: false,
     includeScrivenerFee: false,
+    includePerformanceBond: false,
     includeMortgageRegistration: false,
     includeBankFees: false,
+    includeFireInsurance: false,
     includeRenovation: false,
     includeBuffer: false
   });
@@ -198,18 +206,15 @@ test("calculateBudget can exclude optional fees", () => {
     assessedValueRatio: 50,
     renovationLowPerPingWan: 2,
     renovationHighPerPingWan: 4,
-    scrivenerFee: 30000,
-    mortgageRegistrationRate: 0.12,
-    deedTaxRate: 6,
-    stampTaxRate: 0.1,
-    bankFees: 12000,
-    bufferRate: 2,
+    ...feeInput(),
     includeBrokerFee: false,
     includeDeedTax: false,
     includeStampTax: false,
     includeScrivenerFee: false,
+    includePerformanceBond: false,
     includeMortgageRegistration: false,
     includeBankFees: false,
+    includeFireInsurance: false,
     includeRenovation: false,
     includeBuffer: false
   });
@@ -229,18 +234,27 @@ test("calculateBudget supports zero-interest mortgage calculation", () => {
     assessedValueRatio: 0,
     renovationLowPerPingWan: 0,
     renovationHighPerPingWan: 0,
-    scrivenerFee: 0,
-    mortgageRegistrationRate: 0,
-    deedTaxRate: 0,
-    stampTaxRate: 0,
-    bankFees: 0,
-    bufferRate: 0,
+    ...feeInput({
+      contractFee: 0,
+      transferScrivenerFee: 0,
+      realPriceRegistrationFee: 0,
+      mortgageScrivenerFee: 0,
+      performanceBondRate: 0,
+      mortgageRegistrationRate: 0,
+      deedTaxRate: 0,
+      stampTaxAmount: 0,
+      bankFees: 0,
+      fireInsuranceFees: 0,
+      bufferRate: 0
+    }),
     includeBrokerFee: false,
     includeDeedTax: false,
     includeStampTax: false,
     includeScrivenerFee: false,
+    includePerformanceBond: false,
     includeMortgageRegistration: false,
     includeBankFees: false,
+    includeFireInsurance: false,
     includeRenovation: false,
     includeBuffer: false
   });
@@ -263,18 +277,27 @@ test("calculateBudget supports equal-principal mortgage calculation", () => {
     assessedValueRatio: 0,
     renovationLowPerPingWan: 0,
     renovationHighPerPingWan: 0,
-    scrivenerFee: 0,
-    mortgageRegistrationRate: 0,
-    deedTaxRate: 0,
-    stampTaxRate: 0,
-    bankFees: 0,
-    bufferRate: 0,
+    ...feeInput({
+      contractFee: 0,
+      transferScrivenerFee: 0,
+      realPriceRegistrationFee: 0,
+      mortgageScrivenerFee: 0,
+      performanceBondRate: 0,
+      mortgageRegistrationRate: 0,
+      deedTaxRate: 0,
+      stampTaxAmount: 0,
+      bankFees: 0,
+      fireInsuranceFees: 0,
+      bufferRate: 0
+    }),
     includeBrokerFee: false,
     includeDeedTax: false,
     includeStampTax: false,
     includeScrivenerFee: false,
+    includePerformanceBond: false,
     includeMortgageRegistration: false,
     includeBankFees: false,
+    includeFireInsurance: false,
     includeRenovation: false,
     includeBuffer: false
   });
@@ -292,6 +315,6 @@ test("calculateBudget supports equal-principal mortgage calculation", () => {
   assert.equal(result.mortgage.yearlyAverageMonthlyPayments[0].averageMonthlyPayment, 37650);
   assert.equal(result.mortgage.yearlyAverageMonthlyPayments.at(-1).year, 30);
   assert.equal(result.mortgage.yearlyAverageMonthlyPayments.at(-1).averageMonthlyPayment, 22505);
-  assert.match(result.notes[3], /本金平均攤還/);
-  assert.match(result.notes[3], /最後一期約 \$22,266/);
+  assert.match(result.notes[5], /本金平均攤還/);
+  assert.match(result.notes[5], /最後一期約 \$22,266/);
 });

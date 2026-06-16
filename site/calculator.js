@@ -31,6 +31,10 @@ export function calculateBudget(rawInput) {
 
   const renovationLow = input.areaPing * input.renovationLowPerPingWan * 10000;
   const renovationHigh = input.areaPing * input.renovationHighPerPingWan * 10000;
+  const scrivenerFeeTotal = input.contractFee
+    + input.transferScrivenerFee
+    + input.realPriceRegistrationFee
+    + input.mortgageScrivenerFee;
 
   const breakdown = [
     {
@@ -62,16 +66,28 @@ export function calculateBudget(rawInput) {
     {
       key: "stampTax",
       label: "印花稅",
-      low: price * percent(input.stampTaxRate),
-      high: price * percent(input.stampTaxRate),
-      included: input.includeStampTax
+      low: input.stampTaxAmount,
+      high: input.stampTaxAmount,
+      included: input.includeStampTax,
+      detail: input.stampTaxAmount > 0
+        ? "改為手動輸入，方便依實際文件或代書試算單填寫。"
+        : "目前預設為 0；若你手上已有代書或仲介提供的金額，可直接填入。"
     },
     {
       key: "scrivenerFee",
-      label: "代書 / 設定固定費",
-      low: input.scrivenerFee,
-      high: input.scrivenerFee,
-      included: input.includeScrivenerFee
+      label: "代書相關費",
+      low: scrivenerFeeTotal,
+      high: scrivenerFeeTotal,
+      included: input.includeScrivenerFee,
+      detail: `簽約 ${formatCurrency(input.contractFee)}、過戶代書 ${formatCurrency(input.transferScrivenerFee)}、實價登錄 ${formatCurrency(input.realPriceRegistrationFee)}、抵押權設定代書 ${formatCurrency(input.mortgageScrivenerFee)}`
+    },
+    {
+      key: "performanceBond",
+      label: "履約保證費",
+      low: roundCurrency(price * percent(input.performanceBondRate)),
+      high: roundCurrency(price * percent(input.performanceBondRate)),
+      included: input.includePerformanceBond,
+      detail: `成交總價 × ${input.performanceBondRate}%`
     },
     {
       key: "mortgageRegistration",
@@ -86,6 +102,13 @@ export function calculateBudget(rawInput) {
       low: input.bankFees,
       high: input.bankFees,
       included: input.includeBankFees
+    },
+    {
+      key: "fireInsurance",
+      label: "火險 / 地震險",
+      low: input.fireInsuranceFees,
+      high: input.fireInsuranceFees,
+      included: input.includeFireInsurance
     },
     {
       key: "renovation",
@@ -129,6 +152,8 @@ export function calculateBudget(rawInput) {
         : assessedValueSource === "direct_missing"
           ? "你已切到房屋評定現值模式，但目前還沒輸入金額，所以契稅暫時顯示為 0。"
           : `你目前使用快速估算模式，因此契稅先以總價的 ${input.assessedValueRatio}% 推估為 ${formatWan(assessedValue)}，再套用 ${input.deedTaxRate}% 稅率估算。`,
+      `代書相關費目前拆成 4 筆：簽約 ${formatCurrency(input.contractFee)}、過戶代書 ${formatCurrency(input.transferScrivenerFee)}、實價登錄 ${formatCurrency(input.realPriceRegistrationFee)}、抵押權設定代書 ${formatCurrency(input.mortgageScrivenerFee)}。`,
+      `履保費先按成交總價的 ${input.performanceBondRate}% 估算；印花稅改為手動輸入 ${formatCurrency(input.stampTaxAmount)}，火險 / 地震險則先抓 ${formatCurrency(input.fireInsuranceFees)}。`,
       `裝潢費以 ${input.areaPing} 坪、每坪 ${input.renovationLowPerPingWan}~${input.renovationHighPerPingWan} 萬估算。`,
       mortgage.months > 0
         ? buildMortgageNote(input, mortgage)
@@ -165,18 +190,25 @@ export function normalizeInput(rawInput) {
     assessedValueRatio: clamp(numberOrZero(rawInput.assessedValueRatio), 0, 100),
     renovationLowPerPingWan: numberOrZero(rawInput.renovationLowPerPingWan),
     renovationHighPerPingWan: numberOrZero(rawInput.renovationHighPerPingWan),
-    scrivenerFee: numberOrZero(rawInput.scrivenerFee),
+    contractFee: numberOrZero(rawInput.contractFee),
+    transferScrivenerFee: numberOrZero(rawInput.transferScrivenerFee),
+    realPriceRegistrationFee: numberOrZero(rawInput.realPriceRegistrationFee),
+    mortgageScrivenerFee: numberOrZero(rawInput.mortgageScrivenerFee),
+    performanceBondRate: numberOrZero(rawInput.performanceBondRate),
     mortgageRegistrationRate: numberOrZero(rawInput.mortgageRegistrationRate),
     deedTaxRate: numberOrZero(rawInput.deedTaxRate),
-    stampTaxRate: numberOrZero(rawInput.stampTaxRate),
+    stampTaxAmount: numberOrZero(rawInput.stampTaxAmount),
     bankFees: numberOrZero(rawInput.bankFees),
+    fireInsuranceFees: numberOrZero(rawInput.fireInsuranceFees),
     bufferRate: numberOrZero(rawInput.bufferRate),
     includeBrokerFee: Boolean(rawInput.includeBrokerFee),
     includeDeedTax: Boolean(rawInput.includeDeedTax),
     includeStampTax: Boolean(rawInput.includeStampTax),
     includeScrivenerFee: Boolean(rawInput.includeScrivenerFee),
+    includePerformanceBond: Boolean(rawInput.includePerformanceBond),
     includeMortgageRegistration: Boolean(rawInput.includeMortgageRegistration),
     includeBankFees: Boolean(rawInput.includeBankFees),
+    includeFireInsurance: Boolean(rawInput.includeFireInsurance),
     includeRenovation: Boolean(rawInput.includeRenovation),
     includeBuffer: Boolean(rawInput.includeBuffer)
   };

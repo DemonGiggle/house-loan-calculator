@@ -1,5 +1,5 @@
-import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606d";
-import { buildShareUrl, mapShareStateKeyToFormField, parseShareStateFromSearch } from "./url-state.js?v=20260608b";
+import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260616a";
+import { buildShareUrl, mapShareStateKeyToFormField, parseShareStateFromSearch } from "./url-state.js?v=20260616a";
 
 const form = document.querySelector("#calculator-form");
 const viewReportButton = document.querySelector("#viewReportButton");
@@ -195,18 +195,25 @@ const helpContent = {
   houseAssessedValueWan: "建議直接填房屋評定現值，也就是房屋稅單上的課稅現值或地方稅務機關提供的標準價格。契稅會優先按這個金額乘稅率計算，最接近實務申報。",
   assessedValueRatio: "只有在你還不知道房屋評定現值時，才用成交總價的一個比例快速估算。這只是近似值，不是正式申報基礎。",
   renovationPerPing: "每坪裝潢抓一個低到高的區間，系統會估出裝潢總額範圍。若只想看純購屋現金需求，可取消納入裝潢。",
-  scrivenerFee: "代書、設定、文件申辦等常見固定支出。不同地區與案件會有差異，這裡先用一筆固定值估算。",
+  contractFee: "簽約當下常見的手續費。不同仲介或代書流程名稱可能不同，但本質上是簽約階段先發生的小額固定支出。",
+  transferScrivenerFee: "過戶代書費是代書處理買賣移轉登記的主要費用。不同地區、案件複雜度或是否另計筆數加收，都可能讓實際金額上下浮動。",
+  realPriceRegistrationFee: "實價登錄申報費是代書協助完成實價登錄作業的常見收費。若你的代書報價單已把它包在別項，也可以自行調整成 0。",
+  mortgageScrivenerFee: "這筆是貸款設定時，代書處理抵押權設定登記的費用，和政府收的『貸款設定規費』不是同一筆。",
+  performanceBondRate: "履保費通常會按成交總價乘上一個很小的比例估算。你提供的單子是 3/10000，換成這裡的百分比寫法就是 0.03%。",
   mortgageRegistrationRate: "房貸設定相關規費，通常會隨貸款金額增加。這裡用貸款額的百分比先粗估。",
   deedTaxRate: "契稅稅率會套用在房屋評定現值；若你沒填正式現值，才會套用在快速估算出的基礎上。一般買賣常見 6%，仍以實際申報條件為準。",
-  stampTaxRate: "印花稅用成交總價的比例簡化估算。這是方便試算的近似值，真實金額仍以實際文件與申報方式為準。",
+  stampTaxAmount: "印花稅先改成手動輸入，避免用過度簡化的百分比公式誤導。若你手上已有代書、仲介或文件上的數字，直接填這格最穩。",
   bankFees: "銀行端常見的一次性費用，例如開辦費、鑑價費、徵信費等，可依你接觸到的銀行方案自行調整。",
+  fireInsuranceFees: "火險與地震險通常是貸款時一起碰到的固定支出之一。實際會看銀行方案與保額，這裡先放一筆可調整的預估值。",
   bufferRate: "額外預留的安全墊，用來吸收零星雜支、估價落差、搬家或臨時支出。這筆常常能救場，我不建議抓成 0。",
   includeBrokerFee: "勾選後，房仲費會算進總現金需求；取消後，你可以先只看純頭期與稅費壓力。",
   includeDeedTax: "勾選後，把契稅算進買房當下要準備的現金。",
   includeStampTax: "勾選後，把印花稅算進總現金需求。",
-  includeScrivenerFee: "勾選後，把代書與設定相關固定費用一起納入。",
+  includeScrivenerFee: "勾選後，把簽約手續費、過戶代書費、實價登錄申報費與抵押權設定代書費一起納入。",
+  includePerformanceBond: "勾選後，把履約保證費算進總現金需求。",
   includeMortgageRegistration: "勾選後，把貸款設定規費算進總現金需求。",
   includeBankFees: "勾選後，把銀行開辦、鑑價等一次性費用納入。",
+  includeFireInsurance: "勾選後，把火險與地震險一起算進交屋前現金準備。",
   includeRenovation: "勾選後，會把裝潢區間一起算進建議自備款；若只看交屋前必要現金，可先取消。",
   includeBuffer: "勾選後，會保留一筆彈性預備金，讓預算不會剛好卡死。"
 };
@@ -256,18 +263,25 @@ function readForm() {
     assessedValueRatio: fieldValue("assessedValueRatio"),
     renovationLowPerPingWan: fieldValue("renovationLowPerPing"),
     renovationHighPerPingWan: fieldValue("renovationHighPerPing"),
-    scrivenerFee: fieldValue("scrivenerFee"),
+    contractFee: fieldValue("contractFee"),
+    transferScrivenerFee: fieldValue("transferScrivenerFee"),
+    realPriceRegistrationFee: fieldValue("realPriceRegistrationFee"),
+    mortgageScrivenerFee: fieldValue("mortgageScrivenerFee"),
+    performanceBondRate: fieldValue("performanceBondRate"),
     mortgageRegistrationRate: fieldValue("mortgageRegistrationRate"),
     deedTaxRate: fieldValue("deedTaxRate"),
-    stampTaxRate: fieldValue("stampTaxRate"),
+    stampTaxAmount: fieldValue("stampTaxAmount"),
     bankFees: fieldValue("bankFees"),
+    fireInsuranceFees: fieldValue("fireInsuranceFees"),
     bufferRate: fieldValue("bufferRate"),
     includeBrokerFee: fieldValue("includeBrokerFee"),
     includeDeedTax: fieldValue("includeDeedTax"),
     includeStampTax: fieldValue("includeStampTax"),
     includeScrivenerFee: fieldValue("includeScrivenerFee"),
+    includePerformanceBond: fieldValue("includePerformanceBond"),
     includeMortgageRegistration: fieldValue("includeMortgageRegistration"),
     includeBankFees: fieldValue("includeBankFees"),
+    includeFireInsurance: fieldValue("includeFireInsurance"),
     includeRenovation: fieldValue("includeRenovation"),
     includeBuffer: fieldValue("includeBuffer")
   };

@@ -1,5 +1,5 @@
-import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260606d";
-import { buildShareUrl, parseShareStateFromSearch } from "./url-state.js?v=20260608a";
+import { calculateBudget, formatCurrency, formatWan } from "./calculator.js?v=20260616a";
+import { buildShareUrl, parseShareStateFromSearch } from "./url-state.js?v=20260616a";
 
 const reportSummary = document.querySelector("#reportSummary");
 const reportRecommendedRange = document.querySelector("#reportRecommendedRange");
